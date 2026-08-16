@@ -13,7 +13,6 @@ export interface Category {
   id: string;
   slug: string;
   name: string;
-  emoji: string;
   tone: Tone;
   /** Short line shown on the tile. */
   blurb: string;
@@ -79,7 +78,6 @@ export interface Event {
   id: string;
   slug: string;
   title: string;
-  emoji: string;
   tone: Tone;
   hostId: string;
   categorySlug: string;
@@ -105,7 +103,6 @@ export interface GearItem {
   id: string;
   name: string;
   vendor: string;
-  emoji: string;
   tone: Tone;
   price: string;
   blurb: string;
@@ -151,7 +148,6 @@ export interface Thread {
 export interface Circle {
   id: string;
   title: string;
-  emoji: string;
   tone: Tone;
   hostName: string;
   expertId: string;

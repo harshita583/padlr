@@ -10,7 +10,8 @@ import {
   formatPrice,
   formatTime,
 } from "@/lib/date";
-import { cn, toneSurface } from "@/lib/utils";
+import { Motif } from "@/components/ui/Motif";
+import { cn, motifFor, toneSurface } from "@/lib/utils";
 
 export function EventCard({
   event,
@@ -35,13 +36,14 @@ export function EventCard({
           real event photography — the layout doesn't change. */}
       <div
         className={cn(
-          "relative grid h-44 place-items-center overflow-hidden",
+          "relative h-44 overflow-hidden",
           toneSurface[event.tone],
         )}
       >
-        <span aria-hidden="true" className="text-6xl transition-transform duration-500 ease-[var(--ease-out-soft)] group-hover:scale-110">
-          {event.emoji}
-        </span>
+        <Motif
+          variant={motifFor(event.slug)}
+          className="[mask-image:linear-gradient(to_bottom,black_35%,transparent_85%)] transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-110"
+        />
 
         <time
           dateTime={event.startsAt}
@@ -82,15 +84,12 @@ export function EventCard({
           <div className="flex gap-1.5">
             <dt className="sr-only">Time</dt>
             <dd>
-              <span aria-hidden="true">🕒</span> {formatTime(event.startsAt)} ·{" "}
-              {formatDuration(event.durationMinutes)}
+              {formatTime(event.startsAt)} · {formatDuration(event.durationMinutes)}
             </dd>
           </div>
           <div className="flex gap-1.5">
             <dt className="sr-only">Location</dt>
-            <dd>
-              <span aria-hidden="true">📍</span> {event.neighbourhood}
-            </dd>
+            <dd>{event.neighbourhood}</dd>
           </div>
         </dl>
 

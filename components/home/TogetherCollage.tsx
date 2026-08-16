@@ -25,13 +25,10 @@ export function TogetherCollage() {
               <li key={chip.label} className={cn(positions[i])}>
                 <span
                   className={cn(
-                    "inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold shadow-[var(--shadow-lift)] lg:px-5 lg:py-3 lg:text-base",
+                    "inline-block rounded-full px-4 py-2.5 text-sm font-semibold shadow-[var(--shadow-lift)] lg:px-5 lg:py-3 lg:text-base",
                     toneSurface[chip.tone as Tone],
                   )}
                 >
-                  <span aria-hidden="true" className="text-lg">
-                    {chip.emoji}
-                  </span>
                   {chip.label}
                 </span>
               </li>

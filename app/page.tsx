@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { home } from "@/content";
-import { getCategories, getEvents, getExpertById } from "@/lib/data";
+import { getCategories, getEvents, getExpertById, getExperts } from "@/lib/data";
 import type { Expert } from "@/lib/types";
 import { Hero } from "@/components/home/Hero";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
@@ -16,7 +16,11 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [categories, allEvents] = await Promise.all([getCategories(), getEvents()]);
+  const [categories, allEvents, experts] = await Promise.all([
+    getCategories(),
+    getEvents(),
+    getExperts(),
+  ]);
   const events = allEvents.slice(0, 4);
 
   const hosts: Record<string, Expert | undefined> = {};
@@ -26,7 +30,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero />
+      <Hero sample={experts[0]} />
       <CategoryGrid categories={categories} />
       <EventsRail events={events} hosts={hosts} />
       <ProofCollage />

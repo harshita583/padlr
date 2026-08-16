@@ -79,10 +79,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
             </ul>
           ) : (
             <div className="mt-4 rounded-[var(--radius-card)] border border-dashed border-ink/20 p-12 text-center">
-              <p aria-hidden="true" className="text-5xl">
-                🗓️
-              </p>
-              <h2 className="display mt-4 text-3xl">{copy.index.emptyTitle}</h2>
+              <h2 className="display text-3xl">{copy.index.emptyTitle}</h2>
               <p className="mx-auto mt-3 max-w-sm text-[0.9375rem] leading-relaxed text-ink-soft">
                 {copy.index.emptyBody}
               </p>

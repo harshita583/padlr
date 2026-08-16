@@ -52,7 +52,6 @@ export function FilterBar({ resultCount }: { resultCount: number }) {
           aria-controls={`${id}-panel`}
           className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold"
         >
-          <span aria-hidden="true">⚙️</span>
           {open ? copy.toggleClose : copy.toggleOpen}
         </button>
         <span aria-live="polite" className="text-sm text-ink-faint">

@@ -68,19 +68,14 @@ export const messages = {
    * learner can close it at any point.
    */
   gearDrawer: {
-    title: "Shops for this lesson",
-    body: "Places to buy what you need. Swipe through, or close this — it won't come back on its own.",
-    label: "Shops and products for this lesson",
-    openLabel: "Shops for this lesson",
-    /** The visible label on the close button inside the open panel. */
-    hideAction: "Hide",
-    expandLabel: "Show shopping suggestions",
-    collapseLabel: "Hide shopping suggestions",
-    dismissLabel: "Close shopping suggestions",
+    /** The one line that opens and closes the whole thing. */
+    title: "Things you might need",
+    label: "Things you might need for this lesson",
+    /** Screen-reader-only, since the visible line is the only control. */
+    expandLabel: "Show things you might need",
+    collapseLabel: "Hide things you might need",
     sponsoredBadge: "Sponsored",
     affiliateBadge: "Affiliate",
-    /** Announced when the drawer appears after a teacher shares a link. */
-    appearedAnnouncement: "Shopping suggestions are now available below the conversation.",
   },
   /** The pinned booking summary at the top of a thread. */
   bookingBanner: {

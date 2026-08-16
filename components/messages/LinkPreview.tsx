@@ -1,6 +1,7 @@
 import type { GearItem } from "@/lib/types";
 import { common, messages as copy } from "@/content";
-import { cn, toneSurface } from "@/lib/utils";
+import { Motif } from "@/components/ui/Motif";
+import { cn, motifFor, toneSurface } from "@/lib/utils";
 
 /**
  * The rich preview a shared link unfurls into.
@@ -37,10 +38,8 @@ export function LinkPreview({
         aria-label={copy.productCard.a11yLabel(sender, item.name, item.vendor, item.price)}
         className="overflow-hidden rounded-3xl rounded-bl-lg bg-paper shadow-[var(--shadow-lift)]"
       >
-        <div className={cn("relative grid h-32 place-items-center", toneSurface[item.tone])}>
-          <span aria-hidden="true" className="text-5xl drop-shadow-sm">
-            {item.emoji}
-          </span>
+        <div className={cn("relative h-32 overflow-hidden", toneSurface[item.tone])}>
+          <Motif variant={motifFor(item.id)} />
           <span className="tabular absolute right-3 bottom-3 rounded-full bg-paper px-3 py-1 text-sm font-bold text-ink shadow-sm">
             {item.price}
           </span>
@@ -52,8 +51,7 @@ export function LinkPreview({
         </div>
 
         <figcaption className="p-4">
-          <p className="flex items-center gap-1.5 text-[0.625rem] font-bold tracking-[0.14em] text-ink-faint uppercase">
-            <span aria-hidden="true">🔗</span>
+          <p className="text-[0.625rem] font-bold tracking-[0.14em] text-ink-faint uppercase">
             {domain}
           </p>
 

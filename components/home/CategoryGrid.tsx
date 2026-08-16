@@ -2,7 +2,8 @@ import Link from "next/link";
 import type { Category } from "@/lib/types";
 import { home } from "@/content";
 import { Container, Section, SectionHeading } from "@/components/ui/Primitives";
-import { cn, toneSurface } from "@/lib/utils";
+import { Motif } from "@/components/ui/Motif";
+import { cn, motifFor, toneSurface } from "@/lib/utils";
 
 const copy = home.categories;
 
@@ -30,21 +31,16 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
               <Link
                 href={`/discover?q=${encodeURIComponent(category.name)}`}
                 className={cn(
-                  "group relative flex h-full flex-col justify-between overflow-hidden rounded-[var(--radius-card)] p-5 transition-transform duration-300 ease-[var(--ease-out-soft)] hover:-translate-y-1 sm:p-6",
+                  "group relative flex h-full flex-col justify-end overflow-hidden rounded-[var(--radius-card)] p-5 transition-transform duration-300 ease-[var(--ease-out-soft)] hover:-translate-y-1 sm:p-6",
                   toneSurface[category.tone],
                 )}
               >
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "transition-transform duration-500 ease-[var(--ease-out-soft)] group-hover:scale-110 group-hover:-rotate-6",
-                    category.featured ? "text-6xl sm:text-7xl" : "text-4xl",
-                  )}
-                >
-                  {category.emoji}
-                </span>
+                <Motif
+                  variant={motifFor(category.slug)}
+                  className="[mask-image:linear-gradient(to_bottom,black_35%,transparent_85%)] transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-110"
+                />
 
-                <span className="mt-6 block">
+                <span className="relative block">
                   <span
                     className={cn(
                       "display block leading-tight",

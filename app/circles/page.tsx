@@ -107,15 +107,15 @@ export default async function CirclesPage() {
         <Container>
           <SectionHeading title={copy.steps.title} />
           <ul className="mt-10 grid gap-4 md:grid-cols-3">
-            {copy.steps.items.map((step) => (
+            {copy.steps.items.map((step, i) => (
               <li
                 key={step.title}
                 className="rounded-[var(--radius-card)] bg-cream p-7"
               >
-                <span aria-hidden="true" className="text-4xl">
-                  {step.emoji}
+                <span aria-hidden="true" className="tabular display block text-4xl text-ink/25">
+                  {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="mt-5 text-xl font-bold tracking-tight">{step.title}</h3>
+                <h3 className="mt-4 text-xl font-bold tracking-tight">{step.title}</h3>
                 <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-ink-soft">
                   {step.body}
                 </p>

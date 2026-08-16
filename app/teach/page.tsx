@@ -4,6 +4,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Container, Eyebrow, Section, SectionHeading } from "@/components/ui/Primitives";
 import { EarningsCalculator } from "@/components/teach/EarningsCalculator";
 import { Faq } from "@/components/ui/Faq";
+import { Motif } from "@/components/ui/Motif";
 
 export const metadata: Metadata = {
   title: copy.meta.title,
@@ -15,12 +16,7 @@ export default function TeachPage() {
     <>
       {/* Poster hero */}
       <div className="relative overflow-hidden bg-lemon">
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-12 -bottom-20 text-[20rem] leading-none opacity-20 select-none"
-        >
-          🧑‍🏫
-        </span>
+        <Motif variant="rays" className="text-ink" opacity={0.08} />
         <Container className="relative py-16 sm:py-24">
           <div className="max-w-3xl">
             <Eyebrow className="text-ink/55">{copy.hero.eyebrow}</Eyebrow>
@@ -90,10 +86,7 @@ export default function TeachPage() {
                 key={item.title}
                 className="flex flex-col rounded-[var(--radius-card)] bg-cream p-8"
               >
-                <span aria-hidden="true" className="text-5xl">
-                  {item.emoji}
-                </span>
-                <h3 className="display mt-6 text-3xl">{item.title}</h3>
+                <h3 className="display text-3xl">{item.title}</h3>
                 <p className="mt-3 text-[1.0625rem] leading-relaxed text-ink-soft">
                   {item.body}
                 </p>

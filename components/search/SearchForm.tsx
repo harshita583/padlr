@@ -95,19 +95,9 @@ export function SearchForm({
           <span aria-hidden="true" className="hidden h-10 w-px bg-ink/10 md:block" />
 
           <div className="flex-1 px-4 py-2.5 md:py-1.5">
-            <div className="flex items-baseline justify-between gap-2">
-              <label htmlFor={whereId} className="block text-[0.75rem] font-bold text-ink">
-                {copy.location.label}
-              </label>
-              <button
-                type="button"
-                onClick={useCurrentLocation}
-                disabled={locating}
-                className="text-[0.75rem] font-semibold text-forest underline decoration-forest/30 decoration-2 underline-offset-2 hover:decoration-forest disabled:opacity-60"
-              >
-                {locating ? copy.location.useCurrentBusy : copy.location.useCurrent}
-              </button>
-            </div>
+            <label htmlFor={whereId} className="block text-[0.75rem] font-bold text-ink">
+              {copy.location.label}
+            </label>
             <input
               id={whereId}
               name="where"
@@ -125,11 +115,21 @@ export function SearchForm({
             size={isHero ? "lg" : "md"}
             className={cn("shrink-0", isHero && "md:px-9")}
           >
-            <span aria-hidden="true">🔍</span>
-            <span>{submitLabel ?? copy.submit}</span>
+            {submitLabel ?? copy.submit}
           </Button>
         </div>
       </fieldset>
+
+      <div className="px-4 pt-1 pb-1.5">
+        <button
+          type="button"
+          onClick={useCurrentLocation}
+          disabled={locating}
+          className="text-[0.75rem] font-semibold text-forest underline decoration-forest/30 decoration-2 underline-offset-2 hover:decoration-forest disabled:opacity-60"
+        >
+          {locating ? copy.location.useCurrentBusy : copy.location.useCurrent}
+        </button>
+      </div>
     </form>
   );
 }

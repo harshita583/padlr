@@ -36,13 +36,11 @@ export const teach = {
     title: "Private hours, or a room full",
     items: [
       {
-        emoji: "🤝",
         title: "One to one",
         body: "Somebody books an hour with you. You agree a place, you show them the thing, you get paid for the time.",
         points: ["You set the rate", "You approve every request", "Cancel free up to 24h before"],
       },
       {
-        emoji: "🎪",
         title: "Host a class",
         body: "Put a date on the calendar, cap the group size, and let people book seats. Good for anything that works better with a room.",
         points: ["Set your own group cap", "Charge per seat", "We handle the sign-ups"],

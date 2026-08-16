@@ -33,17 +33,14 @@ export const circles = {
     title: "Three ways to do it",
     items: [
       {
-        emoji: "👯",
         title: "Invite your own people",
         body: "Book a lesson, send a link, and everyone pays their own share at checkout. Nobody has to front the money.",
       },
       {
-        emoji: "🪧",
         title: "Open your booking up",
         body: "Booked an hour and have room? List the spare seats and let neighbours fill them. Your share drops as they join.",
       },
       {
-        emoji: "🧭",
         title: "Join an open circle",
         body: "Somebody near you already started one. Take an empty seat and pay only the per-person rate.",
       },

@@ -13,8 +13,7 @@ export const home = {
   },
 
   hero: {
-    eyebrow: "Now in Greater Boston",
-    /** Rendered as three stacked lines. Keep them short. */
+    /** Rendered as stacked lines. Keep them short. */
     headlineLines: ["Someone nearby", "already knows"] as const,
     headlineAccent: "how.",
     body: "Sourdough, sewing, standing on a surfboard, filing your own taxes. Search a skill, pick your neighbourhood, and book an hour with a real person who can show you.",
@@ -22,7 +21,7 @@ export const home = {
       legend: "Find a teacher near you",
       skill: {
         label: "What do you want to learn?",
-        placeholder: "Try “knitting” or “bike repair”",
+        placeholder: "Try “knitting”",
         /** Suggestions shown under the input as quick-fill chips. */
         suggestionsLabel: "Popular right now",
       },
@@ -36,16 +35,18 @@ export const home = {
       submitA11y: "Search for teachers",
     },
     chips: [
-      { label: "Knitting", emoji: "🧶", href: "/discover?q=knitting" },
-      { label: "Sourdough", emoji: "🍞", href: "/discover?q=sourdough" },
-      { label: "Film photography", emoji: "📷", href: "/discover?q=film%20photography" },
-      { label: "Bike repair", emoji: "🚲", href: "/discover?q=bike%20repair" },
-      { label: "Conversational Spanish", emoji: "🗣️", href: "/discover?q=spanish" },
+      { label: "Knitting", href: "/discover?q=knitting" },
+      { label: "Sourdough", href: "/discover?q=sourdough" },
+      { label: "Film photography", href: "/discover?q=film%20photography" },
+      { label: "Bike repair", href: "/discover?q=bike%20repair" },
+      { label: "Conversational Spanish", href: "/discover?q=spanish" },
     ],
     stat: {
       value: "1,840",
       label: "teachers within 10 miles of you",
     },
+    /** Caption above the sample teacher card in the hero. */
+    sampleLabel: "Free on Thursday",
   },
 
   categories: {
@@ -66,7 +67,6 @@ export const home = {
   proof: {
     /** The big number panel, styled after the reference “84%” card. */
     stat: {
-      emoji: "🙂",
       value: "92%",
       label: "of first lessons end with a second one booked",
     },
@@ -78,7 +78,6 @@ export const home = {
     },
     /** The soft blue “timer” panel. */
     aside: {
-      emoji: "💚",
       timer: "01:00",
       timerLabel: "One hour",
       caption: "That's usually all it takes to stop being a beginner.",
@@ -92,11 +91,11 @@ export const home = {
     cta: { label: "Start a learning circle", href: "/circles" },
     /** Collage chips. `tone` maps to a colour in the component. */
     chips: [
-      { emoji: "🧶", label: "Learn with a friend", tone: "lilac" },
-      { emoji: "🎯", label: "Set a goal together", tone: "sky" },
-      { emoji: "💡", label: "Split the hourly rate", tone: "sage" },
-      { emoji: "📚", label: "Join an open circle", tone: "lemon" },
-      { emoji: "🪁", label: "Just try something", tone: "coral" },
+      { label: "Learn with a friend", tone: "lilac" },
+      { label: "Set a goal together", tone: "sky" },
+      { label: "Split the hourly rate", tone: "sage" },
+      { label: "Join an open circle", tone: "lemon" },
+      { label: "Just try something", tone: "coral" },
     ],
   },
 
@@ -106,19 +105,16 @@ export const home = {
     steps: [
       {
         n: "01",
-        emoji: "🔎",
         title: "Search your skill",
         body: "Type what you want to learn and where you are. We'll show you who's close, what they charge, and when they're free.",
       },
       {
         n: "02",
-        emoji: "💬",
         title: "Message and agree a plan",
         body: "Chat directly with the teacher. They'll tell you what to bring — and can send links for anything you need to buy.",
       },
       {
         n: "03",
-        emoji: "📍",
         title: "Meet up and learn",
         body: "Meet at their studio, your kitchen, or a park bench. You're charged by the hour, only for the time you booked.",
       },
@@ -143,14 +139,13 @@ export const home = {
     ],
   },
 
+  /**
+   * The teacher recruitment band. Deliberately the shortest section on the
+   * page — one statement, one line, one link. Resist adding to it.
+   */
   teachCta: {
-    /** Styled after the reference “WAKE UP FRESH” poster card. */
     posterLines: ["You already", "know something"] as const,
-    body: "Somebody within three miles of you is trying to learn the thing you do without thinking. Set your rate, set your hours, get paid for the time you teach.",
-    bullets: ["Set your own hourly rate", "Keep 85% of every lesson", "Paid out weekly"],
+    body: "Set your rate, set your hours, get paid for the time you teach.",
     cta: { label: "Start teaching", href: "/teach" },
-    secondary: { label: "See how payouts work", href: "/teach" },
-    stampTop: "Anyone can teach",
-    stampBottom: "Passalong",
   },
 } as const;

@@ -32,7 +32,7 @@ export function ExpertCard({ expert, className }: { expert: Expert; className?: 
           </h3>
           {expert.verified ? (
             <Badge className="bg-sage-wash text-forest">
-              <span aria-hidden="true">✓</span> {expertCopy.badges.verified}
+              {expertCopy.badges.verified}
             </Badge>
           ) : null}
         </div>
@@ -46,13 +46,9 @@ export function ExpertCard({ expert, className }: { expert: Expert; className?: 
             label={common.a11y.ratingOf(expert.rating, expert.reviewCount)}
           />
           <span>
-            <span aria-hidden="true">📍 </span>
             {expert.neighbourhood}, {common.labels.milesAway(expert.distanceMiles)}
           </span>
-          <span>
-            <span aria-hidden="true">⚡ </span>
-            {common.labels.respondsIn(expert.responseTime)}
-          </span>
+          <span>{common.labels.respondsIn(expert.responseTime)}</span>
         </div>
 
         <ul className="mt-4 flex flex-wrap gap-1.5">

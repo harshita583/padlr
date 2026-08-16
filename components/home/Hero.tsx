@@ -1,20 +1,14 @@
 import Link from "next/link";
-import { home } from "@/content";
-import { Container, Eyebrow } from "@/components/ui/Primitives";
+import { common, home } from "@/content";
+import type { Expert } from "@/lib/types";
+import { Avatar, Container, Rating } from "@/components/ui/Primitives";
+import { Motif } from "@/components/ui/Motif";
 import { SearchForm } from "@/components/search/SearchForm";
+import { formatPrice } from "@/lib/date";
 
 const copy = home.hero;
 
-/** Decorative objects scattered behind the stat card, à la the reference art. */
-const floaters = [
-  { emoji: "🧶", className: "top-0 left-0 text-5xl -rotate-12" },
-  { emoji: "🍞", className: "top-8 right-0 text-4xl rotate-6" },
-  { emoji: "📷", className: "bottom-8 left-2 text-4xl rotate-12" },
-  { emoji: "🎸", className: "right-2 bottom-0 text-5xl -rotate-6" },
-  { emoji: "🪚", className: "bottom-28 left-0 text-3xl rotate-3" },
-];
-
-export function Hero() {
+export function Hero({ sample }: { sample?: Expert }) {
   return (
     <section className="relative overflow-hidden bg-sage">
       {/* Soft light wash, so the flat green reads as a surface rather than a swatch. */}
@@ -23,14 +17,10 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_15%_0%,rgba(255,253,247,0.55),transparent_60%)]"
       />
 
-      <Container className="relative pt-14 pb-20 sm:pt-20 sm:pb-28">
-        <div className="grid items-center gap-14 lg:grid-cols-[1.15fr_0.85fr]">
+      <Container className="relative pt-16 pb-20 sm:pt-24 sm:pb-28">
+        <div className="grid items-center gap-14 lg:grid-cols-[1.3fr_0.7fr]">
           <div>
-            <Eyebrow className="text-olive/70">
-              <span aria-hidden="true">📍</span> {copy.eyebrow}
-            </Eyebrow>
-
-            <h1 className="display mt-4 text-[clamp(3rem,8.5vw,5.75rem)] text-olive">
+            <h1 className="display text-[clamp(3rem,8.5vw,5.75rem)] text-olive">
               {copy.headlineLines.map((line) => (
                 <span key={line} className="block">
                   {line}
@@ -45,7 +35,7 @@ export function Hero() {
               {copy.body}
             </p>
 
-            <SearchForm className="mt-9 max-w-3xl" />
+            <SearchForm className="mt-9 max-w-2xl" />
 
             <div className="mt-6">
               <h2 className="text-[0.6875rem] font-bold tracking-[0.18em] text-olive/60 uppercase">
@@ -56,9 +46,8 @@ export function Hero() {
                   <li key={chip.label}>
                     <Link
                       href={chip.href}
-                      className="inline-flex items-center gap-2 rounded-full border border-olive/15 bg-paper/70 px-4 py-2 text-sm font-semibold text-olive transition-colors hover:border-olive/35 hover:bg-paper"
+                      className="inline-block rounded-full border border-olive/15 bg-paper/70 px-4 py-2 text-sm font-semibold text-olive transition-colors hover:border-olive/35 hover:bg-paper"
                     >
-                      <span aria-hidden="true">{chip.emoji}</span>
                       {chip.label}
                     </Link>
                   </li>
@@ -67,29 +56,53 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Stat card with floating objects. Decorative — hidden from AT. */}
-          <div className="relative hidden min-h-[24rem] lg:block">
-            <div aria-hidden="true">
-              {floaters.map((f) => (
-                <span key={f.emoji} className={`absolute drop-shadow-lg ${f.className}`}>
-                  {f.emoji}
-                </span>
-              ))}
-            </div>
+          {/* A real teacher and a real number, rather than decoration. */}
+          <div className="hidden lg:block">
+            <div className="relative mx-auto max-w-xs">
+              <div className="relative overflow-hidden rounded-[var(--radius-slab)] bg-olive p-8 pb-16 text-cream shadow-[var(--shadow-lift)]">
+                <Motif variant="arcs" opacity={0.16} />
+                <p className="tabular relative text-6xl leading-none font-bold tracking-tight text-lemon">
+                  {copy.stat.value}
+                </p>
+                <p className="relative mt-3 text-[0.9375rem] leading-snug text-cream/80">
+                  {copy.stat.label}
+                </p>
+              </div>
 
-            <div className="relative mx-auto max-w-xs rotate-2 rounded-[var(--radius-slab)] bg-olive p-8 text-cream shadow-[var(--shadow-lift)]">
-              <span
-                aria-hidden="true"
-                className="grid size-14 place-items-center rounded-2xl bg-lemon text-3xl"
-              >
-                🙌
-              </span>
-              <p className="tabular mt-6 text-6xl leading-none font-bold tracking-tight text-lemon">
-                {copy.stat.value}
-              </p>
-              <p className="mt-3 text-[0.9375rem] leading-snug text-cream/80">
-                {copy.stat.label}
-              </p>
+              {sample ? (
+                <div className="relative -mt-10 ml-6 rotate-2 rounded-[var(--radius-card)] bg-paper p-5 shadow-[var(--shadow-lift)]">
+                  <p className="text-[0.625rem] font-bold tracking-[0.16em] text-ink-faint uppercase">
+                    {copy.sampleLabel}
+                  </p>
+                  <div className="mt-3 flex items-center gap-3">
+                    <Avatar
+                      initials={sample.initials}
+                      name={sample.name}
+                      tone={sample.tone}
+                      size="md"
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate font-bold">{sample.name}</p>
+                      <p className="truncate text-[0.8125rem] text-ink-soft">
+                        {sample.skills[0]} · {sample.neighbourhood}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center justify-between border-t border-ink/10 pt-3">
+                    <Rating
+                      rating={sample.rating}
+                      count={sample.reviewCount}
+                      label={common.a11y.ratingOf(sample.rating, sample.reviewCount)}
+                    />
+                    <p className="tabular font-bold">
+                      {formatPrice(sample.hourlyRate)}
+                      <span className="text-xs font-normal text-ink-faint">
+                        {common.labels.perHour}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

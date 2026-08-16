@@ -12,7 +12,8 @@ import {
 import { Avatar, Badge, Container, Rating, Section } from "@/components/ui/Primitives";
 import { ButtonLink } from "@/components/ui/Button";
 import { EventCard } from "@/components/cards/EventCard";
-import { cn, toneSurface } from "@/lib/utils";
+import { Motif } from "@/components/ui/Motif";
+import { cn, motifFor, toneSurface } from "@/lib/utils";
 
 type Params = Promise<{ slug: string }>;
 
@@ -45,12 +46,7 @@ export default async function EventPage({ params }: { params: Params }) {
     <>
       {/* Poster header */}
       <div className={cn("relative overflow-hidden", toneSurface[event.tone])}>
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-10 -bottom-16 text-[18rem] leading-none opacity-15 select-none"
-        >
-          {event.emoji}
-        </span>
+        <Motif variant={motifFor(event.slug)} opacity={0.14} />
         <Container className="relative py-12 sm:py-16">
           <Link
             href="/events"
@@ -152,7 +148,6 @@ export default async function EventPage({ params }: { params: Params }) {
                       key={item}
                       className="rounded-full bg-paper px-4 py-2 text-[0.9375rem] font-medium"
                     >
-                      <span aria-hidden="true">✓ </span>
                       {item}
                     </li>
                   ))}

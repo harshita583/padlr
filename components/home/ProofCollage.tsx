@@ -48,12 +48,6 @@ export function ProofCollage() {
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_70%_at_75%_15%,rgba(169,193,133,0.5),transparent_70%)]"
             />
-            <span
-              aria-hidden="true"
-              className="absolute top-7 right-7 grid size-16 place-items-center rounded-2xl bg-lemon text-4xl sm:top-8 sm:right-8"
-            >
-              {copy.stat.emoji}
-            </span>
             <p className="tabular relative text-[clamp(4rem,11vw,7rem)] leading-none font-bold tracking-tighter text-paper">
               {copy.stat.value}
             </p>
@@ -64,10 +58,7 @@ export function ProofCollage() {
 
           {/* 3 — the timer */}
           <div className="flex min-h-[18rem] flex-col items-center justify-center bg-sky p-8 text-center">
-            <span aria-hidden="true" className="text-4xl">
-              {copy.aside.emoji}
-            </span>
-            <p className="tabular mt-6 rounded-3xl bg-paper/45 px-8 py-4 text-5xl font-bold tracking-tight text-olive">
+            <p className="tabular rounded-3xl bg-paper/45 px-8 py-4 text-5xl font-bold tracking-tight text-olive">
               {copy.aside.timer}
             </p>
             <p className="display mt-5 text-4xl text-sky-deep">{copy.aside.timerLabel}</p>
@@ -93,8 +84,8 @@ export function ProofCollage() {
                 </p>
               </blockquote>
               <figcaption className="mt-6 flex flex-wrap items-center gap-3">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-lemon px-3 py-1 text-xs font-bold text-ink">
-                  <span aria-hidden="true">💬</span> {copy.quote.badge}
+                <span className="inline-block rounded-full bg-lemon px-3 py-1 text-xs font-bold text-ink">
+                  {copy.quote.badge}
                 </span>
                 <span className="text-sm text-cream/70">{copy.quote.attribution}</span>
               </figcaption>

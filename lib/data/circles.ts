@@ -5,7 +5,6 @@ export const circles: Circle[] = [
   {
     id: "ci1",
     title: "Learning to knit, badly, together",
-    emoji: "🧶",
     tone: "lemon",
     hostName: "Priya N.",
     expertId: "e1",
@@ -21,7 +20,6 @@ export const circles: Circle[] = [
   {
     id: "ci2",
     title: "Saturday morning sourdough crew",
-    emoji: "🍞",
     tone: "sage",
     hostName: "Ellie T.",
     expertId: "e2",
@@ -37,7 +35,6 @@ export const circles: Circle[] = [
   {
     id: "ci3",
     title: "Three of us vs. our own bicycles",
-    emoji: "🚲",
     tone: "sky",
     hostName: "Tom R.",
     expertId: "e3",
@@ -53,7 +50,6 @@ export const circles: Circle[] = [
   {
     id: "ci4",
     title: "Spanish, but no pressure",
-    emoji: "🗣️",
     tone: "coral",
     hostName: "Dana L.",
     expertId: "e8",
@@ -69,7 +65,6 @@ export const circles: Circle[] = [
   {
     id: "ci5",
     title: "Balcony gardeners of Roxbury",
-    emoji: "🌱",
     tone: "sage",
     hostName: "Aisha K.",
     expertId: "e7",
@@ -85,7 +80,6 @@ export const circles: Circle[] = [
   {
     id: "ci6",
     title: "Wonky mugs, four of us",
-    emoji: "🏺",
     tone: "lilac",
     hostName: "Chen W.",
     expertId: "e10",

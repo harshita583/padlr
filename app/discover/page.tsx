@@ -99,10 +99,7 @@ export default async function DiscoverPage({
                 </ul>
               ) : (
                 <div className="rounded-[var(--radius-card)] border border-dashed border-ink/20 p-12 text-center">
-                  <p aria-hidden="true" className="text-5xl">
-                    🫙
-                  </p>
-                  <h2 className="display mt-4 text-3xl">{discover.results.emptyTitle}</h2>
+                  <h2 className="display text-3xl">{discover.results.emptyTitle}</h2>
                   <p className="mx-auto mt-3 max-w-sm text-[0.9375rem] leading-relaxed text-ink-soft">
                     {discover.results.emptyBody}
                   </p>
@@ -137,10 +134,7 @@ export default async function DiscoverPage({
               ) : null}
 
               <div className="rounded-[var(--radius-card)] bg-lemon-soft p-5">
-                <p aria-hidden="true" className="text-2xl">
-                  👯
-                </p>
-                <h2 className="mt-2 font-bold">{discover.sidebar.circlesTitle}</h2>
+                <h2 className="font-bold">{discover.sidebar.circlesTitle}</h2>
                 <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-ink-soft">
                   {discover.sidebar.circlesBody}
                 </p>

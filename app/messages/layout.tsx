@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 
 /** One-line preview of whatever the last message was. */
 function previewOf(kind: string, body: string | undefined): string {
-  if (kind === "product") return "📎 Shared a shopping link";
-  if (kind === "booking") return "📅 Lesson request";
+  if (kind === "product") return "Shared a shopping link";
+  if (kind === "booking") return "Lesson request";
   return body ?? "";
 }
 

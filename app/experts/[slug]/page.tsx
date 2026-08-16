@@ -82,33 +82,24 @@ export default async function ExpertPage({ params }: { params: Params }) {
                   label={common.a11y.ratingOf(person.rating, person.reviewCount)}
                 />
                 <span>
-                  <span aria-hidden="true">📍</span> {person.neighbourhood} ·{" "}
-                  {common.labels.milesAway(person.distanceMiles)}
+                  {person.neighbourhood} · {common.labels.milesAway(person.distanceMiles)}
                 </span>
-                <span>
-                  <span aria-hidden="true">🎓</span>{" "}
-                  {common.labels.lessonCount(person.lessonsTaught)}
-                </span>
+                <span>{common.labels.lessonCount(person.lessonsTaught)}</span>
               </div>
 
               <ul className="mt-4 flex flex-wrap gap-2">
                 {person.verified ? (
                   <li>
-                    <Badge className="bg-paper/80 text-ink">
-                      <span aria-hidden="true">✓</span> {copy.badges.verified}
-                    </Badge>
+                    <Badge className="bg-paper/80 text-ink">{copy.badges.verified}</Badge>
                   </li>
                 ) : null}
                 {person.rating >= 4.9 ? (
                   <li>
-                    <Badge className="bg-paper/80 text-ink">
-                      <span aria-hidden="true">★</span> {copy.badges.topRated}
-                    </Badge>
+                    <Badge className="bg-paper/80 text-ink">{copy.badges.topRated}</Badge>
                   </li>
                 ) : null}
                 <li>
                   <Badge className="bg-paper/80 text-ink">
-                    <span aria-hidden="true">⚡</span>{" "}
                     {common.labels.respondsIn(person.responseTime)}
                   </Badge>
                 </li>

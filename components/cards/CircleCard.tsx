@@ -3,7 +3,8 @@ import { circles as circlesCopy } from "@/content";
 import { Badge } from "@/components/ui/Primitives";
 import { ButtonLink } from "@/components/ui/Button";
 import { formatPrice, formatRelativeDay, formatTime } from "@/lib/date";
-import { cn, toneSurface } from "@/lib/utils";
+import { Motif } from "@/components/ui/Motif";
+import { cn, motifFor, toneSurface } from "@/lib/utils";
 
 export function CircleCard({ circle, className }: { circle: Circle; className?: string }) {
   const seatsOpen = circle.seatsTotal - circle.seatsTaken;
@@ -20,11 +21,11 @@ export function CircleCard({ circle, className }: { circle: Circle; className?: 
         <span
           aria-hidden="true"
           className={cn(
-            "grid size-14 shrink-0 place-items-center rounded-2xl text-2xl",
+            "relative size-14 shrink-0 overflow-hidden rounded-2xl",
             toneSurface[circle.tone],
           )}
         >
-          {circle.emoji}
+          <Motif variant={motifFor(circle.id)} opacity={0.35} />
         </span>
         {isFull ? (
           <Badge className="bg-ink/10 text-ink-soft">{circlesCopy.openCircles.fullLabel}</Badge>
@@ -44,22 +45,17 @@ export function CircleCard({ circle, className }: { circle: Circle; className?: 
       <dl className="mt-4 space-y-1.5 text-sm text-ink-faint">
         <div className="flex gap-1.5">
           <dt className="sr-only">Started by</dt>
-          <dd>
-            <span aria-hidden="true">👤</span> Started by {circle.hostName}
-          </dd>
+          <dd>Started by {circle.hostName}</dd>
         </div>
         <div className="flex gap-1.5">
           <dt className="sr-only">When</dt>
           <dd>
-            <span aria-hidden="true">🕒</span> {formatRelativeDay(circle.startsAt)},{" "}
-            {formatTime(circle.startsAt)}
+            {formatRelativeDay(circle.startsAt)}, {formatTime(circle.startsAt)}
           </dd>
         </div>
         <div className="flex gap-1.5">
           <dt className="sr-only">Where</dt>
-          <dd>
-            <span aria-hidden="true">📍</span> {circle.neighbourhood}
-          </dd>
+          <dd>{circle.neighbourhood}</dd>
         </div>
       </dl>
 

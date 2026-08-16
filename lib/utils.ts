@@ -6,6 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 import type { Tone } from "@/lib/types";
+import { motifVariants, type MotifVariant } from "@/components/ui/Motif";
 
 /**
  * Tone → Tailwind classes.
@@ -45,10 +46,22 @@ export const toneIsDark: Record<Tone, boolean> = {
   cream: false,
 };
 
+function hash(seed: string): number {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  return h;
+}
+
 /** Deterministic tone picker, so the same id always gets the same colour. */
 export function toneFor(seed: string): Tone {
   const tones: Tone[] = ["lemon", "sage", "sky", "lilac", "coral", "olive"];
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
-  return tones[hash % tones.length];
+  return tones[hash(seed) % tones.length];
+}
+
+/**
+ * Deterministic motif picker. Same id, same pattern, every render — so a
+ * category or product keeps its visual identity across pages.
+ */
+export function motifFor(seed: string): MotifVariant {
+  return motifVariants[hash(seed) % motifVariants.length];
 }
