@@ -84,4 +84,42 @@ export const messages = {
     manage: "Manage booking",
     addToCalendar: "Add to calendar",
   },
+
+  /** The booking overlay opened from the conversation header. */
+  bookingDialog: {
+    open: "Book an hour",
+    titleFor: (name: string) => `Book an hour with ${name}`,
+    intro: "Pick a time and send the request. Nothing is charged until they confirm it.",
+    close: "Close",
+    closeLabel: "Close booking",
+    submit: "Send request",
+    submitting: "Sending…",
+    noSlots: "No open times this week — send them a message instead.",
+    /** Announced when the dialog opens. */
+    openedAnnouncement: "Booking form opened",
+  },
+
+  /** The appointment card that lands in the conversation after booking. */
+  bookingCard: {
+    pendingTitle: (name: string) => `Waiting on ${name}`,
+    confirmedTitle: "Lesson confirmed",
+    declinedTitle: "Not this time",
+    lengthLabel: "Length",
+    peopleLabel: "Who's coming",
+    totalLabel: "Total",
+    pendingNote: "You haven't been charged. If they can't make it, nothing happens.",
+    confirmedNote: "Added to your lessons. Free cancellation up to 24 hours before.",
+    declinedNote: "No charge. Try another time, or find someone else nearby.",
+    /**
+     * The teacher's controls, shown on the learner's screen only because this
+     * is a demo — it lets you show both sides of the handshake in one window.
+     */
+    teacherControlsLabel: "Teacher's side — demo only",
+    approve: "Approve",
+    decline: "Can't make it",
+    /** What the teacher says once they've decided. */
+    approveReply: "That works — see you then. I'll message you the exact address the day before.",
+    declineReply:
+      "Sorry, I'm booked that afternoon. I've got Thursday evening or Saturday morning free if either suits?",
+  },
 } as const;

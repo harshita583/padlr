@@ -6,18 +6,10 @@ import { expert as copy } from "@/content";
 import { Button } from "@/components/ui/Button";
 import { PillGroup } from "@/components/ui/Field";
 import { formatPrice } from "@/lib/date";
+import { quoteLesson } from "@/lib/pricing";
+import type { BookableDay } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-/** A day of availability, pre-formatted on the server. */
-export interface BookableDay {
-  date: string;
-  dayShort: string;
-  dayNumber: string;
-  month: string;
-  slots: Array<{ value: string; label: string }>;
-}
-
-const SERVICE_FEE_RATE = 0.1;
 
 export function BookingPanel({
   expertName,
@@ -41,22 +33,16 @@ export function BookingPanel({
 
   const selectedDay = days[dayIndex];
 
-  const price = useMemo(() => {
-    const hours = Number(duration) / 60;
-    const headcount = Number(people);
-    const lesson = Math.round(hourlyRate * hours);
-    const extra = Math.round(groupUplift * (headcount - 1) * hours);
-    const fee = Math.round((lesson + extra) * SERVICE_FEE_RATE);
-    const total = lesson + extra + fee;
-    return {
-      lesson,
-      extra,
-      fee,
-      total,
-      perPerson: Math.round(total / headcount),
-      headcount,
-    };
-  }, [duration, people, hourlyRate, groupUplift]);
+  const price = useMemo(
+    () =>
+      quoteLesson({
+        hourlyRate,
+        groupUplift,
+        durationMinutes: Number(duration),
+        people: Number(people),
+      }),
+    [duration, people, hourlyRate, groupUplift],
+  );
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -204,14 +190,14 @@ export function BookingPanel({
               <dt>{copy.booking.lineItems.total}</dt>
               <dd className="tabular">{formatPrice(price.total)}</dd>
             </div>
-            {price.headcount > 1 ? (
+            {price.people > 1 ? (
               <div className="flex justify-between gap-4 rounded-2xl bg-sage-wash px-3 py-2 text-forest">
                 <dt className="font-semibold">{copy.booking.lineItems.perPerson}</dt>
                 <dd className="tabular font-bold">{formatPrice(price.perPerson)}</dd>
               </div>
             ) : null}
           </dl>
-          {price.headcount > 1 ? (
+          {price.people > 1 ? (
             <p className="mt-2 text-xs leading-relaxed text-ink-faint">
               {copy.booking.groupNote}
             </p>

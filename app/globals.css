@@ -150,6 +150,27 @@
   }
 }
 
+/* Native <dialog> gives us a focus trap, Escape-to-close and an inert
+   background for free. All it needs is its default chrome removed. */
+dialog {
+  margin: auto;
+  max-width: min(34rem, calc(100vw - 2rem));
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  overflow: visible;
+}
+
+dialog:focus {
+  outline: none;
+}
+
+dialog::backdrop {
+  background-color: rgb(20 24 12 / 0.55);
+  backdrop-filter: blur(3px);
+}
+
 /* Marquee used by the testimonial rail. Pauses on hover and on focus-within so
    keyboard users can read and click the cards. */
 @keyframes rail-scroll {

@@ -7,7 +7,16 @@ import {
   getThread,
   getThreads,
 } from "@/lib/data";
-import { formatDuration, formatPrice, formatRelativeDay, formatTime } from "@/lib/date";
+import {
+  formatDayNumber,
+  formatDayShort,
+  formatDuration,
+  formatMonthShort,
+  formatPrice,
+  formatRelativeDay,
+  formatTime,
+} from "@/lib/date";
+import type { BookableDay } from "@/lib/types";
 import { Conversation, type ChatMessage } from "@/components/messages/Conversation";
 
 type Params = Promise<{ id: string }>;
@@ -56,6 +65,15 @@ export default async function ThreadPage({ params }: { params: Params }) {
     getDemoScript(thread.id),
   ]);
 
+  // Formatted here so the booking overlay stays a pure renderer.
+  const days: BookableDay[] = person.availability.map((day) => ({
+    date: day.date,
+    dayShort: formatDayShort(day.date),
+    dayNumber: formatDayNumber(day.date),
+    month: formatMonthShort(day.date),
+    slots: day.slots.map((s) => ({ value: s, label: formatTime(s) })),
+  }));
+
   return (
     <Conversation
       partner={{
@@ -65,10 +83,12 @@ export default async function ThreadPage({ params }: { params: Params }) {
         slug: person.slug,
         skill: thread.skill,
         hourlyRate: person.hourlyRate,
+        groupUplift: person.groupUplift,
       }}
       initialMessages={items}
       gearItems={gearItems}
       demo={demo}
+      days={days}
     />
   );
 }

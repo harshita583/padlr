@@ -114,6 +114,18 @@ export interface GearItem {
   categorySlugs: string[];
 }
 
+/**
+ * A day of availability, pre-formatted on the server so client components
+ * never do date maths and markup can't drift on hydration.
+ */
+export interface BookableDay {
+  date: string;
+  dayShort: string;
+  dayNumber: string;
+  month: string;
+  slots: Array<{ value: string; label: string }>;
+}
+
 export type MessageKind = "text" | "product" | "booking" | "system";
 
 export interface Message {
@@ -132,7 +144,7 @@ export interface Message {
     durationMinutes: number;
     people: number;
     total: number;
-    status: "pending" | "confirmed";
+    status: "pending" | "confirmed" | "declined";
   };
 }
 

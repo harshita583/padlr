@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { GearItem, Tone } from "@/lib/types";
+import type { BookableDay, GearItem, Tone } from "@/lib/types";
 import { messages as copy } from "@/content";
 import { fallbackReply, type ScriptedReply } from "@/lib/data/demoScript";
 import { Avatar } from "@/components/ui/Primitives";
-import { ButtonLink } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
+import { BookingDialog, type BookingRequest } from "./BookingDialog";
 import { GearDrawer } from "./GearDrawer";
 import { LinkPreview } from "./LinkPreview";
+import { formatDuration, formatPrice } from "@/lib/date";
 import { cn } from "@/lib/utils";
 
 /** Serializable view model — the server does all date and money formatting. */
@@ -25,7 +27,7 @@ export interface ChatMessage {
     durationLabel: string;
     peopleLabel: string;
     totalLabel: string;
-    status: "pending" | "confirmed";
+    status: "pending" | "confirmed" | "declined";
   };
 }
 
@@ -36,6 +38,7 @@ export interface ChatPartner {
   slug: string;
   skill: string;
   hourlyRate: number;
+  groupUplift: number;
 }
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -45,9 +48,12 @@ export function Conversation({
   initialMessages,
   gearItems,
   demo,
+  days,
 }: {
   partner: ChatPartner;
   initialMessages: ChatMessage[];
+  /** Availability for the in-chat booking overlay, formatted on the server. */
+  days: BookableDay[];
   /** Everything the shopping drawer can offer for this lesson. */
   gearItems: GearItem[];
   /** Scripted replies. Empty means the teacher stays quiet. */
@@ -57,6 +63,7 @@ export function Conversation({
   const [draft, setDraft] = useState("");
   const [typing, setTyping] = useState(false);
   const [openSignal, setOpenSignal] = useState(0);
+  const [bookingOpen, setBookingOpen] = useState(false);
   const usedReplies = useRef(new Set<number>());
   const cancelled = useRef(false);
   const logRef = useRef<HTMLDivElement>(null);
@@ -87,10 +94,56 @@ export function Conversation({
 
   function append(message: Omit<ChatMessage, "id" | "time">) {
     localId.current += 1;
-    setItems((prev) => [
-      ...prev,
-      { ...message, id: `local-${localId.current}`, time: "Just now" },
-    ]);
+    const id = `local-${localId.current}`;
+    setItems((prev) => [...prev, { ...message, id, time: "Just now" }]);
+    return id;
+  }
+
+  /** Turn the overlay's answers into an appointment card in the thread. */
+  function handleBookingConfirm(request: BookingRequest) {
+    const day = days[request.dayIndex];
+    const slotLabel =
+      day?.slots.find((s) => s.value === request.slot)?.label ?? request.slot;
+
+    append({
+      kind: "booking",
+      mine: true,
+      booking: {
+        dateLabel: day ? `${day.dayShort} ${day.dayNumber} ${day.month}` : "",
+        timeLabel: slotLabel,
+        durationLabel: formatDuration(request.durationMinutes),
+        peopleLabel:
+          request.people === 1 ? "Just you" : `${request.people} people`,
+        totalLabel: formatPrice(request.total),
+        status: "pending",
+      },
+    });
+    setBookingOpen(false);
+  }
+
+  /** The teacher's decision, played back into the thread. */
+  function decideBooking(messageId: string, status: "confirmed" | "declined") {
+    setItems((prev) =>
+      prev.map((m) =>
+        m.id === messageId && m.booking
+          ? { ...m, booking: { ...m.booking, status } }
+          : m,
+      ),
+    );
+    void (async () => {
+      setTyping(true);
+      await wait(1400);
+      if (cancelled.current) return;
+      setTyping(false);
+      append({
+        kind: "text",
+        mine: false,
+        body:
+          status === "confirmed"
+            ? copy.bookingCard.approveReply
+            : copy.bookingCard.declineReply,
+      });
+    })();
   }
 
   /** Keyword match first, then the next unused reply, then the fallback. */
@@ -168,10 +221,25 @@ export function Conversation({
               : copy.thread.contextFor(partner.skill, partner.hourlyRate)}
           </p>
         </div>
-        <ButtonLink href={`/experts/${partner.slug}`} variant="outline" size="sm">
-          {copy.thread.bookCta}
-        </ButtonLink>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setBookingOpen(true)}
+        >
+          {copy.bookingDialog.open}
+        </Button>
       </div>
+
+      <BookingDialog
+        open={bookingOpen}
+        onClose={() => setBookingOpen(false)}
+        onConfirm={handleBookingConfirm}
+        partnerName={partner.name}
+        hourlyRate={partner.hourlyRate}
+        groupUplift={partner.groupUplift}
+        days={days}
+      />
 
       {/* Message log */}
       <div
@@ -188,7 +256,12 @@ export function Conversation({
         ) : null}
 
         {items.map((message) => (
-          <MessageRow key={message.id} message={message} partner={partner} />
+          <MessageRow
+            key={message.id}
+            message={message}
+            partner={partner}
+            onDecide={decideBooking}
+          />
         ))}
 
         {typing ? <TypingIndicator name={partner.name} /> : null}
@@ -280,7 +353,15 @@ function TypingIndicator({ name }: { name: string }) {
   );
 }
 
-function MessageRow({ message, partner }: { message: ChatMessage; partner: ChatPartner }) {
+function MessageRow({
+  message,
+  partner,
+  onDecide,
+}: {
+  message: ChatMessage;
+  partner: ChatPartner;
+  onDecide: (id: string, status: "confirmed" | "declined") => void;
+}) {
   const align = message.mine ? "items-end" : "items-start";
 
   if (message.kind === "product" && message.gear) {
@@ -299,7 +380,12 @@ function MessageRow({ message, partner }: { message: ChatMessage; partner: ChatP
   if (message.kind === "booking" && message.booking) {
     return (
       <div className={cn("flex flex-col gap-1.5", align)}>
-        <BookingMessage booking={message.booking} time={message.time} />
+        <BookingMessage
+          booking={message.booking}
+          time={message.time}
+          partnerName={partner.name}
+          onDecide={(status) => onDecide(message.id, status)}
+        />
       </div>
     );
   }
@@ -339,33 +425,96 @@ function Bubble({ message }: { message: ChatMessage }) {
 function BookingMessage({
   booking,
   time,
+  partnerName,
+  onDecide,
 }: {
   booking: NonNullable<ChatMessage["booking"]>;
   time: string;
+  partnerName: string;
+  onDecide: (status: "confirmed" | "declined") => void;
 }) {
-  const confirmed = booking.status === "confirmed";
+  const card = copy.bookingCard;
+  const { status } = booking;
+
+  const surface =
+    status === "confirmed"
+      ? "bg-sage-wash"
+      : status === "declined"
+        ? "bg-ink/8"
+        : "bg-lemon-soft";
+
+  const title =
+    status === "confirmed"
+      ? card.confirmedTitle
+      : status === "declined"
+        ? card.declinedTitle
+        : card.pendingTitle(partnerName);
+
+  const note =
+    status === "confirmed"
+      ? card.confirmedNote
+      : status === "declined"
+        ? card.declinedNote
+        : card.pendingNote;
+
   return (
-    <div className="w-[17rem] rounded-3xl bg-lemon-soft p-5 shadow-[var(--shadow-lift)]">
+    <div className={cn("w-[18rem] rounded-3xl p-5 shadow-[var(--shadow-lift)]", surface)}>
       <p className="text-[0.625rem] font-bold tracking-[0.14em] text-ink/60 uppercase">
-        {confirmed ? copy.bookingBanner.upcomingLabel : copy.bookingBanner.pendingLabel}
+        {title}
       </p>
-      <p className="mt-2 text-lg leading-snug font-bold">
+      <p
+        className={cn(
+          "mt-2 text-lg leading-snug font-bold",
+          status === "declined" && "text-ink/60 line-through",
+        )}
+      >
         {booking.dateLabel}, {booking.timeLabel}
       </p>
+
       <dl className="mt-3 space-y-1 text-[0.8125rem] text-ink-soft">
         <div className="flex justify-between gap-3">
-          <dt>Length</dt>
+          <dt>{card.lengthLabel}</dt>
           <dd className="tabular font-medium">{booking.durationLabel}</dd>
         </div>
         <div className="flex justify-between gap-3">
-          <dt>Who&apos;s coming</dt>
+          <dt>{card.peopleLabel}</dt>
           <dd className="font-medium">{booking.peopleLabel}</dd>
         </div>
         <div className="flex justify-between gap-3 border-t border-ink/15 pt-1.5">
-          <dt className="font-semibold text-ink">Total</dt>
+          <dt className="font-semibold text-ink">{card.totalLabel}</dt>
           <dd className="tabular font-bold text-ink">{booking.totalLabel}</dd>
         </div>
       </dl>
+
+      <p className="mt-3 text-[0.6875rem] leading-relaxed text-ink/60">{note}</p>
+
+      {/* The other side of the handshake. Only rendered while a request is
+          outstanding, and labelled so nobody mistakes it for the learner's
+          own controls. Delete this block when real teacher accounts exist. */}
+      {status === "pending" ? (
+        <div className="mt-4 border-t border-dashed border-ink/25 pt-3">
+          <p className="text-[0.625rem] font-bold tracking-[0.12em] text-ink/45 uppercase">
+            {card.teacherControlsLabel}
+          </p>
+          <div className="mt-2 flex gap-2">
+            <button
+              type="button"
+              onClick={() => onDecide("confirmed")}
+              className="flex-1 rounded-full bg-forest px-3 py-2 text-[0.8125rem] font-semibold text-paper transition-colors hover:bg-olive"
+            >
+              {card.approve}
+            </button>
+            <button
+              type="button"
+              onClick={() => onDecide("declined")}
+              className="flex-1 rounded-full border-2 border-ink/20 px-3 py-2 text-[0.8125rem] font-semibold transition-colors hover:border-ink/40"
+            >
+              {card.decline}
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       <p className="tabular mt-3 text-[0.6875rem] text-ink/50">{time}</p>
     </div>
   );

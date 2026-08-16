@@ -10,7 +10,8 @@ import {
   formatTime,
 } from "@/lib/date";
 import { Avatar, Badge, Container, Rating, Rule, Section } from "@/components/ui/Primitives";
-import { BookingPanel, type BookableDay } from "@/components/expert/BookingPanel";
+import { BookingPanel } from "@/components/expert/BookingPanel";
+import type { BookableDay } from "@/lib/types";
 import { EventCard } from "@/components/cards/EventCard";
 import { ExpertCard } from "@/components/cards/ExpertCard";
 import { toneSurface } from "@/lib/utils";
