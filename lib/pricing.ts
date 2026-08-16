@@ -10,7 +10,7 @@
 export const SERVICE_FEE_RATE = 0.1;
 
 /** Padlr's cut of the teacher's rate, deducted from what they're paid. */
-export const PLATFORM_FEE_RATE = 0.15;
+export const PLATFORM_FEE_RATE = 0.05;
 
 /** What a teacher keeps from an hour at `rate`. */
 export function teacherTakeHome(rate: number): number {

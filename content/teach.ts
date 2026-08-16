@@ -14,21 +14,21 @@ export const teach = {
     secondary: { label: "See what people are asking for", href: "/discover" },
     stats: [
       { value: "$62", label: "median hourly rate" },
-      { value: "85%", label: "of the fee is yours" },
+      { value: "95%", label: "of the fee is yours" },
       { value: "Weekly", label: "payouts, every Friday" },
     ],
   },
   earnings: {
     eyebrow: "The money",
-    title: "Set a rate, keep most of it",
-    body: "You choose your hourly rate. Padlr takes 15% to cover payments, insurance and support. Payouts land every Friday.",
+    title: "Set a rate, keep nearly all of it",
+    body: "You choose your hourly rate. Padlr takes 5% to cover payments, insurance and support. Payouts land every Friday.",
     calculator: {
       legend: "Estimate what you'd earn",
       rateLabel: "Your hourly rate",
       hoursLabel: "Hours you'd teach per week",
       resultLabel: "You'd take home",
       resultSuffix: "per week, after fees",
-      feeNote: (fee: number) => `After the 15% platform fee ($${fee}).`,
+      feeNote: (fee: number) => `After the 5% platform fee ($${fee}).`,
     },
   },
   ways: {
@@ -93,7 +93,7 @@ export const teach = {
       {
         id: "terms",
         title: "Your rate and your hours",
-        body: "You set both. Padlr takes 15% of what you charge and handles the payment.",
+        body: "You set both. Padlr takes 5% of what you charge and handles the payment.",
       },
       {
         id: "safety",
@@ -149,7 +149,7 @@ export const teach = {
     earnings: {
       label: "What you'd keep",
       perHour: (take: string, gross: string) => `${take} of every ${gross} hour`,
-      note: "Padlr's 15% covers payments, the messaging, and cover if something goes wrong.",
+      note: "Padlr's 5% covers payments, the messaging, and cover if something goes wrong.",
       groupExample: (each: string, total: string, n: number) =>
         `A group of ${n} pays ${each} each — ${total} to you for the same hour.`,
     },
