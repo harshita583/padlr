@@ -10,7 +10,7 @@ export const teach = {
     eyebrow: "For teachers",
     posterLines: ["Get paid", "for what you", "already know"] as const,
     body: "You don't need a certificate. You need one skill and one free hour. Somebody within three miles is trying to learn it right now.",
-    cta: { label: "Create a teacher profile", href: "/teach" },
+    cta: { label: "Create a teacher profile", href: "/teach/apply" },
     secondary: { label: "See what people are asking for", href: "/discover" },
     stats: [
       { value: "$62", label: "median hourly rate" },
@@ -57,6 +57,179 @@ export const teach = {
       { n: "04", title: "Take your first booking", body: "We'll notify you the moment somebody nearby searches for your skill." },
     ],
   },
+  /**
+   * Signing up to teach.
+   *
+   * Longer than the learner flow on purpose: a teacher is asking strangers to
+   * come to their home and pay them, so what they publish has to be enough for
+   * somebody to decide on.
+   */
+  apply: {
+    meta: {
+      title: "Start teaching",
+      description:
+        "Set up a teacher profile: what you teach, what you charge, and when you're free.",
+    },
+    hero: {
+      eyebrow: "Start teaching",
+      title: "Set up your teaching profile",
+      body: "Four short steps. Nothing is public until you've seen exactly how it looks, and you can change any of it later.",
+    },
+    progress: {
+      label: "Sign-up progress",
+      stepOf: (n: number, total: number) => `Step ${n} of ${total}`,
+    },
+    steps: [
+      {
+        id: "you",
+        title: "Who you are",
+        body: "Learners see your first name and last initial — never your full name, and never your address until a lesson is confirmed.",
+      },
+      {
+        id: "craft",
+        title: "What you teach",
+        body: "Be specific. \"Sourdough shaping and scoring\" gets far more enquiries than \"baking\".",
+      },
+      {
+        id: "terms",
+        title: "Your rate and your hours",
+        body: "You set both. Padlr takes 15% of what you charge and handles the payment.",
+      },
+      {
+        id: "safety",
+        title: "Safety, then a look at your profile",
+        body: "The same checks we ask of learners, plus a preview of exactly what they'll see.",
+      },
+    ],
+    fields: {
+      firstName: { label: "First name", placeholder: "Rosa" },
+      lastInitial: { label: "Last initial", placeholder: "A", hint: "Just the letter." },
+      email: { label: "Email", placeholder: "you@example.com" },
+      neighbourhood: {
+        label: "Neighbourhood",
+        placeholder: "Somerville",
+        hint: "Roughly where you'd teach. Learners see the area, not the address.",
+      },
+      category: { label: "Craft", placeholder: "Pick one" },
+      skills: {
+        label: "What you'd teach",
+        placeholder: "Casting on\nFixing dropped stitches\nReading a pattern",
+        hint: "One per line. These are what people search for.",
+      },
+      headline: {
+        label: "One line about you",
+        placeholder: "Twenty years of knitting and a lot of patience for beginners",
+        hint: "The first thing anyone reads. Keep it human.",
+      },
+      bio: {
+        label: "A bit more",
+        placeholder:
+          "How you learned it, who you're good at teaching, and what a first hour with you is like.",
+        counter: (n: number, max: number) => `${n} / ${max}`,
+      },
+      rate: { label: "Your hourly rate", hint: "You can change this whenever you like." },
+      uplift: {
+        label: "Extra per additional learner",
+        hint: "What you add for each person beyond the first, so a group is worth your while.",
+      },
+      formats: {
+        legend: "How you'd like to teach",
+        options: [
+          { value: "one-to-one", label: "One to one" },
+          { value: "group", label: "Small groups" },
+          { value: "class", label: "Bigger classes" },
+        ],
+      },
+      days: {
+        legend: "Days you're usually free",
+        hint: "A rough guide. You confirm each lesson individually.",
+        options: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      },
+    },
+    earnings: {
+      label: "What you'd keep",
+      perHour: (take: string, gross: string) => `${take} of every ${gross} hour`,
+      note: "Padlr's 15% covers payments, the messaging, and cover if something goes wrong.",
+      groupExample: (each: string, total: string, n: number) =>
+        `A group of ${n} pays ${each} each — ${total} to you for the same hour.`,
+    },
+    safety: {
+      title: "Because people are coming to your home",
+      points: [
+        "Learners have to have a profile before they can book you.",
+        "You approve every lesson. Nothing lands in your calendar without you.",
+        "Your address is only shared once you've confirmed a lesson.",
+        "Either side can cancel free up to 24 hours before.",
+      ],
+      idCheck: {
+        title: "Verify your identity",
+        body: "A verified badge roughly doubles how many people message a new teacher. It takes a minute.",
+        action: "Verify with photo ID",
+        pending: "Checking…",
+        done: "Identity verified",
+        skipNote: "You can skip this and do it later, but you'll get fewer enquiries.",
+      },
+      guidelines: {
+        label: "I've read and I'll follow the",
+        linkLabel: "teaching guidelines",
+        href: "/teach",
+        required: "Please confirm you'll follow the guidelines.",
+      },
+    },
+    review: {
+      previewLabel: "How you'll appear in search",
+      badgeVerified: "ID verified",
+      badgeUnverified: "Not yet verified",
+      newTeacher: "New teacher",
+      teachesLabel: "Teaches",
+      rateFor: (rate: string) => `${rate}/hr`,
+    },
+    errors: {
+      required: "This one's needed.",
+      email: "That doesn't look like an email address.",
+      headlineShort: "A few more words — this is the first thing people read.",
+      bioShort: "Say a little more. Around a sentence or two is plenty.",
+      skills: "List at least one thing you'd teach.",
+      rate: "Pick an hourly rate.",
+      formats: "Pick at least one way you'd teach.",
+    },
+    nav: { back: "Back", next: "Continue", finish: "Publish my profile" },
+    done: {
+      title: "You're set up to teach",
+      body: "Your profile is live. Enquiries arrive in Messages, and you approve every lesson before it's booked.",
+      nextLabel: "What happens now",
+      next: [
+        "People searching your craft near you will see your profile.",
+        "When somebody messages you it lands in Messages, same as anywhere else.",
+        "You approve or decline each lesson, and get paid after it happens.",
+      ],
+      primary: { label: "Go to Messages", href: "/messages" },
+      secondary: { label: "See how learners search", href: "/discover" },
+      edit: "Start over",
+    },
+    /** The teaching panel on your account page. */
+    panel: {
+      eyebrow: "You teach on Padlr",
+      rateFor: (rate: string, take: string) => `${rate}/hr — ${take} of it yours`,
+      teachesLabel: "You teach",
+      daysLabel: "Usually free",
+      formatsLabel: "Lesson types",
+      formatNames: {
+        "one-to-one": "One to one",
+        group: "Small groups",
+        class: "Bigger classes",
+      },
+      messagesCta: { label: "Enquiries", href: "/messages" },
+      editCta: { label: "Change your details", href: "/teach/apply" },
+    },
+    /** Shown at the top of the form if a profile already exists. */
+    existing: {
+      title: (name: string) => `You already teach as ${name}`,
+      body: "Filling this in again replaces what's there.",
+      action: "Delete my teacher profile",
+    },
+  },
+
   faq: {
     title: "Before you ask",
     items: [
@@ -85,6 +258,6 @@ export const teach = {
   finalCta: {
     displayLines: ["Somebody is", "waiting to learn"] as const,
     body: "It takes about ten minutes to set up a profile.",
-    cta: { label: "Start teaching", href: "/teach" },
+    cta: { label: "Start teaching", href: "/teach/apply" },
   },
 } as const;

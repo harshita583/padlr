@@ -9,6 +9,14 @@
 /** Padlr's cut, added on top of what the teacher receives. */
 export const SERVICE_FEE_RATE = 0.1;
 
+/** Padlr's cut of the teacher's rate, deducted from what they're paid. */
+export const PLATFORM_FEE_RATE = 0.15;
+
+/** What a teacher keeps from an hour at `rate`. */
+export function teacherTakeHome(rate: number): number {
+  return Math.round(rate * (1 - PLATFORM_FEE_RATE));
+}
+
 export interface Quote {
   /** The teacher's base rate for the booked time. */
   lesson: number;

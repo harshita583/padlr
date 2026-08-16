@@ -3,24 +3,30 @@ import { brand, footer } from "@/content";
 import { Container } from "@/components/ui/Primitives";
 import { PaddleMark } from "@/components/site/Logo";
 
+/**
+ * Warm clay rather than the near-black olive it used to be: the whole site is
+ * paper, cream and lemon, and ending on something that dark read as a
+ * different product. Clay is a shade further than the body background, which
+ * is enough to mark the footer as its own zone without a hard cut.
+ */
 export function SiteFooter() {
   return (
-    <footer className="on-dark bg-olive text-cream">
+    <footer className="border-t border-ink/10 bg-clay text-ink">
       <Container className="py-16 sm:py-20">
         <div className="grid gap-12 lg:grid-cols-[1.4fr_2fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="grid size-9 place-items-center rounded-xl bg-forest text-white ring-1 ring-cream/25">
-                <PaddleMark />
+              <span className="grid size-9 place-items-center rounded-xl bg-forest text-white">
+                <PaddleMark className="size-6" halo="var(--color-forest)" />
               </span>
               <span className="display text-2xl">{brand.wordmark}</span>
             </div>
-            <p className="mt-5 max-w-sm text-[0.9375rem] leading-relaxed text-cream/70">
+            <p className="mt-5 max-w-sm text-[0.9375rem] leading-relaxed text-ink-soft">
               {footer.blurb}
             </p>
             <a
               href={`mailto:${brand.email}`}
-              className="mt-5 inline-block text-[0.9375rem] font-semibold text-lemon underline decoration-lemon/40 decoration-2 underline-offset-4 hover:decoration-lemon"
+              className="mt-5 inline-block text-[0.9375rem] font-semibold text-forest underline decoration-forest/30 decoration-2 underline-offset-4 hover:decoration-forest"
             >
               {brand.email}
             </a>
@@ -29,7 +35,7 @@ export function SiteFooter() {
           <div className="grid gap-10 sm:grid-cols-3">
             {footer.columns.map((column) => (
               <nav key={column.title} aria-label={column.title}>
-                <h2 className="text-[0.6875rem] font-bold tracking-[0.18em] text-cream/50 uppercase">
+                <h2 className="text-[0.6875rem] font-bold tracking-[0.18em] text-ink-soft uppercase">
                   {column.title}
                 </h2>
                 <ul className="mt-4 flex flex-col gap-2.5">
@@ -37,7 +43,7 @@ export function SiteFooter() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-[0.9375rem] text-cream/80 transition-colors hover:text-lemon"
+                        className="text-[0.9375rem] text-ink-soft transition-colors hover:text-forest"
                       >
                         {link.label}
                       </Link>
@@ -49,8 +55,8 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-5 border-t border-cream/15 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-cream/50">{footer.legal}</p>
+        <div className="mt-14 flex flex-col gap-5 border-t border-ink/12 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-ink-soft">{footer.legal}</p>
           <ul aria-label={footer.socialLabel} className="flex gap-5">
             {footer.social.map((item) => (
               <li key={item.label}>
@@ -58,7 +64,7 @@ export function SiteFooter() {
                   href={item.href}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="text-sm font-medium text-cream/70 transition-colors hover:text-lemon"
+                  className="text-sm font-medium text-ink-soft transition-colors hover:text-forest"
                 >
                   {item.label}
                 </a>

@@ -225,7 +225,7 @@ export function BookingPanel({
         )}
 
         <Link
-          href={`/messages?to=${expertSlug}`}
+          href={`/messages/with/${expertSlug}`}
           className="text-center text-sm font-semibold text-forest underline decoration-forest/30 decoration-2 underline-offset-4 hover:decoration-forest"
         >
           {copy.booking.messageInstead}

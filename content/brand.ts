@@ -55,7 +55,7 @@ export const footer = {
     {
       title: "Teach",
       links: [
-        { label: "Start teaching", href: "/teach" },
+        { label: "Start teaching", href: "/teach/apply" },
         { label: "How payouts work", href: "/teach" },
         { label: "Host a class", href: "/teach" },
         { label: "Teacher handbook", href: "/teach" },

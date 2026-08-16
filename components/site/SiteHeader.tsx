@@ -38,7 +38,9 @@ export function SiteHeader() {
             aria-label={`${brand.name} — home`}
           >
             <span className="grid size-9 place-items-center rounded-xl bg-forest text-white transition-transform duration-300 ease-[var(--ease-out-soft)] group-hover:-rotate-6">
-              <PaddleMark />
+              {/* The halo is the badge colour, so the front paddle breaks the
+                  one behind it where they cross. */}
+              <PaddleMark className="size-6" halo="var(--color-forest)" />
             </span>
             <span className="display text-2xl tracking-tight">{brand.wordmark}</span>
           </Link>

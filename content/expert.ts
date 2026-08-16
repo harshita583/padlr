@@ -8,6 +8,9 @@ export const expert = {
     teachesLabel: "Teaches",
     aboutLabel: "About",
     backToResults: "Back to search",
+    /** Talking to them first is free, so it's offered as prominently as booking. */
+    messageCta: (name: string) => `Message ${name}`,
+    messageHint: "Ask before you book. Most people do.",
   },
   booking: {
     panelLabel: "Book a lesson",

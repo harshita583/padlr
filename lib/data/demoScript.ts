@@ -37,6 +37,88 @@ export const fallbackReply: ScriptedReply = {
 };
 
 /**
+ * Replies for a conversation you've just opened with somebody you've never
+ * messaged. Deliberately craft-agnostic — these have to work for all of the
+ * teachers, so they answer the shape of the question rather than the subject.
+ */
+export const firstContactReplies: ScriptedReply[] = [
+  {
+    match: ["hello", "hi ", "hey"],
+    typingMs: 1500,
+    messages: [
+      {
+        kind: "text",
+        body: "Hello! Tell me roughly where you're at with it and what's going wrong — I'll know from that whether an hour will fix it.",
+      },
+    ],
+  },
+  {
+    match: ["never", "beginner", "start", "new", "scratch"],
+    typingMs: 2000,
+    messages: [
+      {
+        kind: "text",
+        body: "Complete beginners are the easiest, honestly. You've got no bad habits to undo yet.",
+      },
+      {
+        kind: "text",
+        body: "First hour I'd just get you doing it badly and then fix the two things that matter. Bring nothing.",
+      },
+    ],
+  },
+  {
+    match: ["when", "free", "weekend", "time", "available", "saturday", "sunday"],
+    typingMs: 1600,
+    messages: [
+      {
+        kind: "text",
+        body: "My open times are on my profile — whatever's showing there is genuinely free. Book whichever suits and I'll confirm.",
+      },
+    ],
+  },
+  {
+    match: ["bring", "need", "buy", "kit", "equipment", "tools"],
+    typingMs: 1800,
+    messages: [
+      {
+        kind: "text",
+        body: "Nothing for the first hour. I'd rather you used mine and found out what you actually like before spending anything.",
+      },
+    ],
+  },
+  {
+    match: ["friend", "two of us", "together", "group", "partner"],
+    typingMs: 1700,
+    messages: [
+      {
+        kind: "text",
+        body: "Bring them — it's a bit more per hour for me but a lot less each for you, and people learn faster with someone to be rubbish alongside.",
+      },
+    ],
+  },
+  {
+    match: ["where", "address", "place", "meet", "come to"],
+    typingMs: 1600,
+    messages: [
+      {
+        kind: "text",
+        body: "Usually mine, and I send the exact address once a lesson is confirmed. If you'd rather meet somewhere public first, that's completely fine — plenty of people do.",
+      },
+    ],
+  },
+  {
+    match: ["cost", "price", "how much", "rate", "pay"],
+    typingMs: 1500,
+    messages: [
+      {
+        kind: "text",
+        body: "The rate on my profile is the whole thing — no materials charge on top for a first lesson.",
+      },
+    ],
+  },
+];
+
+/**
  * Replies for a conversation opened by starting a circle, where the teacher is
  * weighing up hosting a group rather than a one-to-one hour.
  */

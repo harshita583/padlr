@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { messages as copy } from "@/content";
 import { CIRCLES_EVENT, circleInitials, readCircles } from "@/lib/circlesStore";
+import { CONTACTS_EVENT, readContacts } from "@/lib/contactsStore";
 import { formatRelativeDay, formatTime } from "@/lib/date";
 import { ThreadList, type ThreadSummary } from "./ThreadList";
 import { Container } from "@/components/ui/Primitives";
@@ -60,6 +61,32 @@ export function MessagesShell({
     return () => window.removeEventListener(CIRCLES_EVENT, read);
   }, []);
 
+  // Conversations you've started from a teacher's profile. Same reason as
+  // above: the server has no way of knowing about them.
+  const [contactThreads, setContactThreads] = useState<ThreadSummary[]>([]);
+
+  useEffect(() => {
+    const read = () =>
+      setContactThreads(
+        readContacts().map((contact) => {
+          const relative = formatRelativeDay(contact.startedAt);
+          return {
+            id: `with/${contact.slug}`,
+            name: contact.name,
+            initials: contact.initials,
+            tone: contact.tone,
+            skill: contact.skill,
+            preview: contact.lastLine || copy.inbox.contactPreview,
+            time: relative === "Today" ? formatTime(contact.startedAt) : relative,
+            unread: 0,
+          };
+        }),
+      );
+    read();
+    window.addEventListener(CONTACTS_EVENT, read);
+    return () => window.removeEventListener(CONTACTS_EVENT, read);
+  }, []);
+
   return (
     <Container className="py-6 sm:py-10">
       {/* A fixed height at every breakpoint, so the message log scrolls inside
@@ -76,7 +103,10 @@ export function MessagesShell({
             <h1 className="display text-2xl">{copy.inbox.title}</h1>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto">
-            <ThreadList threads={[...circleThreads, ...threads]} activeId={activeId} />
+            <ThreadList
+              threads={[...circleThreads, ...contactThreads, ...threads]}
+              activeId={activeId}
+            />
           </div>
         </div>
 

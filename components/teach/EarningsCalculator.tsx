@@ -3,9 +3,12 @@
 import { useId, useState } from "react";
 import { teach as copy } from "@/content";
 import { formatPrice } from "@/lib/date";
+import { PLATFORM_FEE_RATE } from "@/lib/pricing";
 
 const calc = copy.earnings.calculator;
-const PLATFORM_FEE = 0.15;
+// One definition of the cut, shared with the sign-up flow — if these ever
+// disagree, a teacher is quoted one figure and paid another.
+const PLATFORM_FEE = PLATFORM_FEE_RATE;
 
 export function EarningsCalculator() {
   const id = useId();

@@ -65,9 +65,12 @@ export function Conversation({
   gearItems,
   demo,
   days,
+  onSend,
 }: {
   partner: ChatPartner;
   initialMessages: ChatMessage[];
+  /** Fires with each message the learner sends, for inbox previews. */
+  onSend?: (text: string) => void;
   /** Availability for the in-chat booking overlay, formatted on the server. */
   days: BookableDay[];
   /** Everything the shopping drawer can offer for this lesson. */
@@ -257,6 +260,7 @@ export function Conversation({
     if (!body) return;
     append({ kind: "text", mine: true, body });
     setDraft("");
+    onSend?.(body);
     if (demo.length > 0) void playReply(pickReply(body));
   }
 
@@ -315,6 +319,14 @@ export function Conversation({
         {demo.length > 0 ? (
           <p className="mx-auto w-fit rounded-full bg-ink/6 px-3.5 py-1.5 text-center text-[0.6875rem] font-medium text-ink-faint">
             {copy.thread.demoBanner}
+          </p>
+        ) : null}
+
+        {/* A conversation you've only just opened. Better than a blank pane,
+            and it says what a useful first message looks like. */}
+        {items.length === 0 ? (
+          <p className="mx-auto max-w-xs py-8 text-center text-[0.9375rem] leading-relaxed text-ink-faint">
+            {copy.thread.newConversationFor(partner.name)}
           </p>
         ) : null}
 

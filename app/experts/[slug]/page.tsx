@@ -10,6 +10,7 @@ import {
   formatTime,
 } from "@/lib/date";
 import { Avatar, Badge, Container, Rating, Rule, Section } from "@/components/ui/Primitives";
+import { ButtonLink } from "@/components/ui/Button";
 import { BookingPanel } from "@/components/expert/BookingPanel";
 import type { BookableDay } from "@/lib/types";
 import { EventCard } from "@/components/cards/EventCard";
@@ -64,7 +65,9 @@ export default async function ExpertPage({ params }: { params: Params }) {
             <span aria-hidden="true">←</span> {copy.header.backToResults}
           </Link>
 
-          <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-end">
+          {/* Top-aligned: the column beside the avatar is tall enough now that
+              bottom-aligning left the face stranded mid-air. */}
+          <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-start">
             <Avatar
               initials={person.initials}
               name={person.name}
@@ -88,7 +91,16 @@ export default async function ExpertPage({ params }: { params: Params }) {
                 <span>{common.labels.lessonCount(person.lessonsTaught)}</span>
               </div>
 
-              <ul className="mt-4 flex flex-wrap gap-2">
+              {/* Messaging is free and non-committal, so it sits next to the
+                  name rather than only at the bottom of the booking panel. */}
+              <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+                <ButtonLink href={`/messages/with/${person.slug}`} size="lg">
+                  {copy.header.messageCta(person.name.split(" ")[0])}
+                </ButtonLink>
+                <p className="text-sm opacity-70">{copy.header.messageHint}</p>
+              </div>
+
+              <ul className="mt-5 flex flex-wrap gap-2">
                 {person.verified ? (
                   <li>
                     <Badge className="bg-paper/80 text-ink">{copy.badges.verified}</Badge>

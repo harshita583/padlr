@@ -15,6 +15,8 @@ export const messages = {
     emptyCta: { label: "Find a teacher", href: "/discover" },
     unreadLabel: (n: number) => `${n} unread`,
     openConversation: (name: string) => `Open conversation with ${name}`,
+    /** A conversation opened from a profile, before anything has been said. */
+    contactPreview: "You haven't said anything yet",
     /** One-line previews for a circle request sitting in the inbox. */
     circlePreview: {
       pending: "Circle request — waiting on them",
@@ -38,6 +40,9 @@ export const messages = {
     typingLabel: (name: string) => `${name} is typing…`,
     /** Banner marking the conversation as a demo, not a real teacher. */
     demoBanner: "Demo conversation — replies are simulated so you can walk through the flow.",
+    /** Shown in a conversation you've opened but not yet said anything in. */
+    newConversationFor: (name: string) =>
+      `This is the start of your conversation with ${name}. Tell them what you're trying to learn and where you're stuck — that's what they need to know.`,
   },
   composer: {
     label: "Write a message",
