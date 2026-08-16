@@ -71,7 +71,9 @@ export const messages = {
     title: "Shops for this lesson",
     body: "Places to buy what you need. Swipe through, or close this — it won't come back on its own.",
     label: "Shops and products for this lesson",
-    openLabel: "Shop kit for this lesson",
+    openLabel: "Shops for this lesson",
+    /** The visible label on the close button inside the open panel. */
+    hideAction: "Hide",
     expandLabel: "Show shopping suggestions",
     collapseLabel: "Hide shopping suggestions",
     dismissLabel: "Close shopping suggestions",

@@ -48,7 +48,9 @@ export function ThreadList({ threads }: { threads: ThreadSummary[] }) {
                   <span className="tabular shrink-0 text-xs text-ink-faint">{thread.time}</span>
                 </div>
                 <p className="text-xs font-semibold text-ink-faint">{thread.skill}</p>
-                <p className="mt-1 line-clamp-1 text-sm text-ink-soft">{thread.preview}</p>
+                <p className="mt-1 line-clamp-2 text-sm leading-snug text-ink-soft">
+                  {thread.preview}
+                </p>
               </div>
               {thread.unread > 0 ? (
                 <span className="mt-1 grid size-5 shrink-0 place-items-center self-start rounded-full bg-coral text-[0.625rem] font-bold text-paper">

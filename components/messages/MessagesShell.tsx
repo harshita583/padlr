@@ -24,7 +24,10 @@ export function MessagesShell({
 
   return (
     <Container className="py-6 sm:py-10">
-      <div className="grid overflow-hidden rounded-[var(--radius-card)] border border-ink/8 bg-paper lg:h-[calc(100dvh-11rem)] lg:grid-cols-[21rem_1fr]">
+      {/* A fixed height at every breakpoint, so the message log scrolls inside
+          the card and the composer stays put instead of drifting down the
+          page. min-h keeps it usable on short laptop screens. */}
+      <div className="grid h-[calc(100dvh-7.5rem)] min-h-[32rem] overflow-hidden rounded-[var(--radius-card)] border border-ink/8 bg-paper sm:h-[calc(100dvh-9.5rem)] lg:grid-cols-[21rem_1fr]">
         <div
           className={cn(
             "flex min-h-0 min-w-0 flex-col border-ink/8 lg:border-r",
