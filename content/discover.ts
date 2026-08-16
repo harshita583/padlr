@@ -67,11 +67,20 @@ export const discover = {
       ],
     },
   },
-  gear: {
-    eyebrow: "Kit for this skill",
-    title: "What you'll need",
-    body: "Starter gear recommended by teachers on Passalong. Buy it anywhere you like — these are just shortcuts.",
-    railLabel: "Recommended starter gear",
+  /**
+   * The results sidebar. Kept deliberately non-commercial — shopping links
+   * only ever appear inside a conversation, once a teacher has shared one.
+   */
+  sidebar: {
+    relatedTitle: "Also taught nearby",
+    circlesTitle: "Bring someone with you",
+    circlesBody:
+      "Two of you splitting an hour costs far less each than booking it alone.",
+    circlesCta: "See how that works",
+    missingTitle: "Nobody teaching what you need?",
+    missingBody:
+      "Tell us the skill and we'll let you know the moment somebody nearby offers it.",
+    missingCta: "Request a skill",
   },
   results: {
     landmarkLabel: "Search results",

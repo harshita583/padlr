@@ -2,13 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { common, expert as copy } from "@/content";
-import {
-  getEventsByHost,
-  getExpert,
-  getExperts,
-  getGearByIds,
-  getSimilarExperts,
-} from "@/lib/data";
+import { getEventsByHost, getExpert, getExperts, getSimilarExperts } from "@/lib/data";
 import {
   formatDayNumber,
   formatDayShort,
@@ -19,7 +13,6 @@ import { Avatar, Badge, Container, Rating, Rule, Section } from "@/components/ui
 import { BookingPanel, type BookableDay } from "@/components/expert/BookingPanel";
 import { EventCard } from "@/components/cards/EventCard";
 import { ExpertCard } from "@/components/cards/ExpertCard";
-import { GearCard } from "@/components/cards/GearCard";
 import { toneSurface } from "@/lib/utils";
 
 type Params = Promise<{ slug: string }>;
@@ -44,8 +37,7 @@ export default async function ExpertPage({ params }: { params: Params }) {
   const person = await getExpert(slug);
   if (!person) notFound();
 
-  const [gearItems, hostedEvents, similar] = await Promise.all([
-    getGearByIds(person.gear),
+  const [hostedEvents, similar] = await Promise.all([
     getEventsByHost(person.id),
     getSimilarExperts(person),
   ]);
@@ -204,31 +196,6 @@ export default async function ExpertPage({ params }: { params: Params }) {
                         </li>
                       ))}
                     </ul>
-                  </section>
-                </>
-              ) : null}
-
-              {/* Gear */}
-              {gearItems.length > 0 ? (
-                <>
-                  <Rule className="my-12" />
-                  <section aria-labelledby="gear-heading">
-                    <h2 id="gear-heading" className="display text-3xl">
-                      {copy.sections.gear.title}
-                    </h2>
-                    <p className="mt-2 max-w-xl text-[0.9375rem] text-ink-soft">
-                      {copy.sections.gear.body}
-                    </p>
-                    <ul className="mt-6 grid gap-3 sm:grid-cols-3">
-                      {gearItems.map((item) => (
-                        <li key={item.id}>
-                          <GearCard item={item} />
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="mt-3 text-xs leading-relaxed text-ink-faint">
-                      {common.disclosure.long}
-                    </p>
                   </section>
                 </>
               ) : null}

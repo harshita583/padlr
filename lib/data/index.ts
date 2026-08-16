@@ -15,6 +15,7 @@ import { events } from "./events";
 import { gear } from "./gear";
 import { threads } from "./threads";
 import { circles } from "./circles";
+import { demoScripts, type ScriptedReply } from "./demoScript";
 
 export interface SearchParams {
   /** Free-text skill query. */
@@ -220,6 +221,14 @@ export async function getThreads(): Promise<Thread[]> {
 
 export async function getThread(id: string): Promise<Thread | undefined> {
   return threads.find((t) => t.id === id);
+}
+
+/**
+ * Scripted teacher replies for the demo. Returns an empty list for threads
+ * without a script, which simply means the teacher won't answer back.
+ */
+export async function getDemoScript(threadId: string): Promise<ScriptedReply[]> {
+  return demoScripts[threadId] ?? [];
 }
 
 /* -------------------------------------------------------------------------- */

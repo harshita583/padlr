@@ -54,10 +54,6 @@ export const expert = {
       body: "Scheduled sessions you can join without booking a private hour.",
       empty: "No scheduled classes right now.",
     },
-    gear: {
-      title: "What to bring",
-      body: "Things this teacher suggests having on hand. Nothing is required for a first lesson.",
-    },
     location: {
       title: "Where you'd meet",
       body: "Exact address is shared once a lesson is confirmed.",

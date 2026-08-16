@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { brand, common, discover } from "@/content";
-import { getGearForCategories, searchExperts } from "@/lib/data";
+import { searchExperts } from "@/lib/data";
 import { Container, Eyebrow, Section } from "@/components/ui/Primitives";
 import { SearchForm } from "@/components/search/SearchForm";
 import { FilterBar } from "@/components/search/FilterBar";
 import { ExpertCard } from "@/components/cards/ExpertCard";
-import { GearRail } from "@/components/gear/GearRail";
 import { ButtonLink } from "@/components/ui/Button";
 
 export const metadata: Metadata = {
@@ -45,9 +45,11 @@ export default async function DiscoverPage({
     maxPrice: maxPrice ? Number(maxPrice) : undefined,
   });
 
-  // The gear rail follows whatever categories the results are actually in.
-  const categorySlugs = [...new Set(experts.flatMap((e) => e.categories))];
-  const gearItems = await getGearForCategories(categorySlugs);
+  // Sibling skills the current results also teach, as a way to widen a search
+  // that came back thin.
+  const relatedSkills = [...new Set(experts.flatMap((e) => e.skills))]
+    .filter((skill) => skill !== q.trim().toLowerCase())
+    .slice(0, 10);
 
   return (
     <>
@@ -85,7 +87,7 @@ export default async function DiscoverPage({
             </Suspense>
           </div>
 
-          <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_20rem]">
+          <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_18rem]">
             <section aria-label={discover.results.landmarkLabel}>
               {experts.length > 0 ? (
                 <ul className="flex flex-col gap-4">
@@ -111,18 +113,50 @@ export default async function DiscoverPage({
               )}
             </section>
 
-            {/* Sponsored / affiliate equipment. Always labelled — see GearRail. */}
-            <aside className="lg:sticky lg:top-24 lg:self-start">
+            {/* Deliberately non-commercial. Shopping links only ever appear in
+                a conversation, after a teacher has chosen to share one. */}
+            <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
+              {relatedSkills.length > 0 ? (
+                <div className="rounded-[var(--radius-card)] border border-ink/8 bg-paper p-5">
+                  <h2 className="text-[0.6875rem] font-bold tracking-[0.16em] text-ink-faint uppercase">
+                    {discover.sidebar.relatedTitle}
+                  </h2>
+                  <ul className="mt-3 flex flex-wrap gap-1.5">
+                    {relatedSkills.map((skill) => (
+                      <li key={skill}>
+                        <Link
+                          href={`/discover?q=${encodeURIComponent(skill)}`}
+                          className="inline-block rounded-full bg-ink/6 px-3 py-1.5 text-[0.8125rem] font-medium capitalize transition-colors hover:bg-ink/12"
+                        >
+                          {skill}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              <div className="rounded-[var(--radius-card)] bg-lemon-soft p-5">
+                <p aria-hidden="true" className="text-2xl">
+                  👯
+                </p>
+                <h2 className="mt-2 font-bold">{discover.sidebar.circlesTitle}</h2>
+                <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-ink-soft">
+                  {discover.sidebar.circlesBody}
+                </p>
+                <ButtonLink href="/circles" variant="secondary" size="sm" className="mt-4">
+                  {discover.sidebar.circlesCta}
+                </ButtonLink>
+              </div>
+
               <div className="rounded-[var(--radius-card)] border border-ink/8 bg-paper p-5">
-                <GearRail
-                  items={gearItems}
-                  eyebrow={discover.gear.eyebrow}
-                  title={discover.gear.title}
-                  body={discover.gear.body}
-                  label={discover.gear.railLabel}
-                  layout="grid"
-                  compact
-                />
+                <h2 className="font-bold">{discover.sidebar.missingTitle}</h2>
+                <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-ink-soft">
+                  {discover.sidebar.missingBody}
+                </p>
+                <ButtonLink href="/teach" variant="outline" size="sm" className="mt-4">
+                  {discover.sidebar.missingCta}
+                </ButtonLink>
               </div>
             </aside>
           </div>

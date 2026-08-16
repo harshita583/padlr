@@ -27,7 +27,7 @@ export function MessagesShell({
       <div className="grid overflow-hidden rounded-[var(--radius-card)] border border-ink/8 bg-paper lg:h-[calc(100dvh-11rem)] lg:grid-cols-[21rem_1fr]">
         <div
           className={cn(
-            "flex min-h-0 flex-col border-ink/8 lg:border-r",
+            "flex min-h-0 min-w-0 flex-col border-ink/8 lg:border-r",
             inThread && "hidden lg:flex",
           )}
         >
@@ -39,7 +39,9 @@ export function MessagesShell({
           </div>
         </div>
 
-        <div className={cn("flex min-h-0 flex-col", !inThread && "hidden lg:flex")}>
+        {/* min-w-0 matters: without it the 1fr track grows to fit the widest
+            child and the conversation spills past the card edge. */}
+        <div className={cn("flex min-h-0 min-w-0 flex-col", !inThread && "hidden lg:flex")}>
           {children}
         </div>
       </div>

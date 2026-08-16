@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import type { GearItem } from "@/lib/types";
-import { common, messages as copy } from "@/content";
-import { Avatar, Badge } from "@/components/ui/Primitives";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { GearItem, Tone } from "@/lib/types";
+import { messages as copy } from "@/content";
+import { fallbackReply, type ScriptedReply } from "@/lib/data/demoScript";
+import { Avatar } from "@/components/ui/Primitives";
 import { ButtonLink } from "@/components/ui/Button";
-import { cn, toneSurface } from "@/lib/utils";
+import { GearDrawer } from "./GearDrawer";
+import { LinkPreview } from "./LinkPreview";
+import { cn } from "@/lib/utils";
 
 /** Serializable view model — the server does all date and money formatting. */
 export interface ChatMessage {
@@ -29,47 +32,120 @@ export interface ChatMessage {
 export interface ChatPartner {
   name: string;
   initials: string;
-  tone: "lemon" | "sage" | "sky" | "lilac" | "coral" | "olive" | "cream";
+  tone: Tone;
   slug: string;
   skill: string;
   hourlyRate: number;
 }
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export function Conversation({
   partner,
   initialMessages,
-  gearRail,
+  gearItems,
+  demo,
 }: {
   partner: ChatPartner;
   initialMessages: ChatMessage[];
-  /** Server-rendered equipment row, shown above the composer. */
-  gearRail?: ReactNode;
+  /** Everything the shopping drawer can offer for this lesson. */
+  gearItems: GearItem[];
+  /** Scripted replies. Empty means the teacher stays quiet. */
+  demo: ScriptedReply[];
 }) {
   const [items, setItems] = useState(initialMessages);
   const [draft, setDraft] = useState("");
+  const [typing, setTyping] = useState(false);
+  const [openSignal, setOpenSignal] = useState(0);
+  const usedReplies = useRef(new Set<number>());
+  const cancelled = useRef(false);
   const logRef = useRef<HTMLDivElement>(null);
+  const localId = useRef(0);
+
+  const gearById = useMemo(
+    () => new Map(gearItems.map((item) => [item.id, item])),
+    [gearItems],
+  );
+
+  /** The drawer only exists once the teacher has actually shared something. */
+  const teacherHasShared = items.some((m) => m.kind === "product" && !m.mine);
+
+  // Stop any in-flight scripted reply if the component goes away.
+  useEffect(() => {
+    cancelled.current = false;
+    return () => {
+      cancelled.current = true;
+    };
+  }, []);
 
   // Scroll the log itself rather than calling scrollIntoView — the latter also
   // scrolls every ancestor, which drags the whole page sideways.
   useEffect(() => {
     const log = logRef.current;
     if (log) log.scrollTop = log.scrollHeight;
-  }, [items.length]);
+  }, [items.length, typing]);
+
+  function append(message: Omit<ChatMessage, "id" | "time">) {
+    localId.current += 1;
+    setItems((prev) => [
+      ...prev,
+      { ...message, id: `local-${localId.current}`, time: "Just now" },
+    ]);
+  }
+
+  /** Keyword match first, then the next unused reply, then the fallback. */
+  function pickReply(text: string): ScriptedReply {
+    const said = text.toLowerCase();
+
+    const matched = demo.findIndex(
+      (reply, i) =>
+        !usedReplies.current.has(i) &&
+        reply.match?.some((keyword) => said.includes(keyword)),
+    );
+    if (matched !== -1) {
+      usedReplies.current.add(matched);
+      return demo[matched];
+    }
+
+    const next = demo.findIndex((reply, i) => !usedReplies.current.has(i) && !reply.match);
+    if (next !== -1) {
+      usedReplies.current.add(next);
+      return demo[next];
+    }
+
+    return fallbackReply;
+  }
+
+  async function playReply(reply: ScriptedReply) {
+    const perMessage = Math.max(900, reply.typingMs / reply.messages.length);
+
+    for (const scripted of reply.messages) {
+      setTyping(true);
+      await wait(perMessage);
+      if (cancelled.current) return;
+      setTyping(false);
+
+      if (scripted.kind === "product") {
+        const gear = gearById.get(scripted.gearId);
+        if (gear) {
+          append({ kind: "product", mine: false, body: scripted.body, gear });
+          setOpenSignal((n) => n + 1);
+        }
+      } else {
+        append({ kind: "text", mine: false, body: scripted.body });
+      }
+
+      await wait(350);
+      if (cancelled.current) return;
+    }
+  }
 
   function send(text: string) {
     const body = text.trim();
     if (!body) return;
-    setItems((prev) => [
-      ...prev,
-      {
-        id: `local-${prev.length}`,
-        kind: "text",
-        mine: true,
-        time: "Just now",
-        body,
-      },
-    ]);
+    append({ kind: "text", mine: true, body });
     setDraft("");
+    if (demo.length > 0) void playReply(pickReply(body));
   }
 
   return (
@@ -83,16 +159,13 @@ export function Conversation({
           <span aria-hidden="true">←</span>
           <span className="sr-only">{copy.thread.backToInbox}</span>
         </Link>
-        <Avatar
-          initials={partner.initials}
-          name={partner.name}
-          tone={partner.tone}
-          size="sm"
-        />
+        <Avatar initials={partner.initials} name={partner.name} tone={partner.tone} size="sm" />
         <div className="min-w-0 flex-1">
           <p className="truncate font-bold">{partner.name}</p>
           <p className="truncate text-xs text-ink-faint">
-            {copy.thread.contextFor(partner.skill, partner.hourlyRate)}
+            {typing
+              ? copy.thread.typingLabel(partner.name)
+              : copy.thread.contextFor(partner.skill, partner.hourlyRate)}
           </p>
         </div>
         <ButtonLink href={`/experts/${partner.slug}`} variant="outline" size="sm">
@@ -108,15 +181,25 @@ export function Conversation({
         aria-live="polite"
         className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-cream/50 px-4 py-5"
       >
+        {demo.length > 0 ? (
+          <p className="mx-auto w-fit rounded-full bg-ink/6 px-3.5 py-1.5 text-center text-[0.6875rem] font-medium text-ink-faint">
+            {copy.thread.demoBanner}
+          </p>
+        ) : null}
+
         {items.map((message) => (
           <MessageRow key={message.id} message={message} partner={partner} />
         ))}
+
+        {typing ? <TypingIndicator name={partner.name} /> : null}
       </div>
 
-      {/* Equipment row. Commercial content, clearly separated from the log. */}
-      {gearRail ? (
-        <div className="border-t border-ink/8 bg-paper px-4 py-4">{gearRail}</div>
-      ) : null}
+      {/* Shopping drawer — hidden until the teacher shares a link */}
+      <GearDrawer
+        items={gearItems}
+        available={teacherHasShared}
+        openSignal={openSignal}
+      />
 
       {/* Composer */}
       <div className="border-t border-ink/8 px-4 py-3">
@@ -179,14 +262,36 @@ export function Conversation({
   );
 }
 
+function TypingIndicator({ name }: { name: string }) {
+  return (
+    <div className="flex items-start">
+      <p className="flex items-center gap-1.5 rounded-3xl rounded-bl-lg bg-paper px-4 py-3.5 shadow-[0_1px_2px_rgb(20_24_12/0.06)]">
+        <span className="sr-only">{copy.thread.typingLabel(name)}</span>
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            aria-hidden="true"
+            className="size-1.5 animate-bounce rounded-full bg-ink-faint"
+            style={{ animationDelay: `${i * 140}ms`, animationDuration: "1s" }}
+          />
+        ))}
+      </p>
+    </div>
+  );
+}
+
 function MessageRow({ message, partner }: { message: ChatMessage; partner: ChatPartner }) {
   const align = message.mine ? "items-end" : "items-start";
 
   if (message.kind === "product" && message.gear) {
     return (
       <div className={cn("flex flex-col gap-1.5", align)}>
-        {message.body ? <Bubble message={message} /> : null}
-        <ProductMessage gear={message.gear} sender={partner.name} time={message.time} />
+        <LinkPreview
+          item={message.gear}
+          sender={partner.name}
+          time={message.time}
+          note={message.body}
+        />
       </div>
     );
   }
@@ -228,63 +333,6 @@ function Bubble({ message }: { message: ChatMessage }) {
         {message.time}
       </p>
     </div>
-  );
-}
-
-/**
- * A shopping link shared inside the conversation.
- *
- * The affiliate disclosure sits on the card itself, not in a footnote — the
- * person reading it needs to see it at the moment they decide to tap.
- */
-function ProductMessage({
-  gear,
-  sender,
-  time,
-}: {
-  gear: GearItem;
-  sender: string;
-  time: string;
-}) {
-  return (
-    <figure className="w-[17rem] overflow-hidden rounded-3xl rounded-bl-lg bg-paper shadow-[var(--shadow-lift)]">
-      <div className={cn("grid h-24 place-items-center", toneSurface[gear.tone])}>
-        <span aria-hidden="true" className="text-4xl">
-          {gear.emoji}
-        </span>
-      </div>
-      <figcaption className="p-4">
-        <p className="text-[0.625rem] font-bold tracking-[0.14em] text-ink-faint uppercase">
-          {copy.productCard.sentByLabel(sender)}
-        </p>
-        <p className="mt-1.5 leading-snug font-bold">{gear.name}</p>
-        <p className="mt-1 text-[0.8125rem] leading-snug text-ink-soft">{gear.blurb}</p>
-
-        <div className="mt-3 flex items-center justify-between gap-2">
-          <span className="tabular font-bold">{gear.price}</span>
-          <a
-            href={gear.url}
-            target="_blank"
-            rel="noreferrer noopener sponsored"
-            className="rounded-full bg-forest px-4 py-1.5 text-[0.8125rem] font-semibold text-paper transition-colors hover:bg-olive"
-          >
-            {copy.productCard.viewItem}
-            <span className="sr-only"> — {common.a11y.externalLink}</span>
-          </a>
-        </div>
-
-        {gear.affiliate ? (
-          <p className="mt-3 flex items-start gap-1.5 border-t border-ink/10 pt-3 text-[0.6875rem] leading-relaxed text-ink-faint">
-            <Badge className="shrink-0 bg-ink/8 px-2 py-0.5 text-[0.5625rem] text-ink-faint">
-              {copy.productCard.disclosure}
-            </Badge>
-            {common.disclosure.inChat}
-          </p>
-        ) : null}
-
-        <p className="tabular mt-2 text-[0.6875rem] text-ink-faint">{time}</p>
-      </figcaption>
-    </figure>
   );
 }
 

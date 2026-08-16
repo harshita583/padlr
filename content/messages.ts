@@ -28,6 +28,10 @@ export const messages = {
     dayDividerYesterday: "Yesterday",
     /** Announced to screen readers when a new message arrives. */
     newMessageAnnouncement: (name: string) => `New message from ${name}`,
+    /** Shown while the simulated teacher is composing a reply. */
+    typingLabel: (name: string) => `${name} is typing…`,
+    /** Banner marking the conversation as a demo, not a real teacher. */
+    demoBanner: "Demo conversation — replies are simulated so you can walk through the flow.",
   },
   composer: {
     label: "Write a message",
@@ -46,21 +50,35 @@ export const messages = {
       ],
     },
   },
-  /** The shopping-link card a teacher can drop into the conversation. */
+  /** The rich preview a teacher's shared link unfurls into. */
   productCard: {
     sentByLabel: (name: string) => `${name} shared a link`,
     viewItem: "View item",
     disclosure: "Affiliate link",
     savedLabel: "Saved to your list",
     save: "Save for later",
+    /** Screen-reader description of the whole preview card. */
+    a11yLabel: (sender: string, name: string, vendor: string, price: string) =>
+      `Link shared by ${sender}: ${name} from ${vendor}, ${price}`,
   },
-  /** The sponsored gear row that sits beside the conversation. */
-  gearRail: {
-    title: "Kit for this lesson",
-    body: "Suggested by teachers. Buy anywhere — these are shortcuts, not requirements.",
-    label: "Suggested equipment",
+  /**
+   * The shopping drawer above the composer.
+   *
+   * It stays hidden until the teacher has shared at least one link, and the
+   * learner can close it at any point.
+   */
+  gearDrawer: {
+    title: "Shops for this lesson",
+    body: "Places to buy what you need. Swipe through, or close this — it won't come back on its own.",
+    label: "Shops and products for this lesson",
+    openLabel: "Shop kit for this lesson",
+    expandLabel: "Show shopping suggestions",
+    collapseLabel: "Hide shopping suggestions",
+    dismissLabel: "Close shopping suggestions",
     sponsoredBadge: "Sponsored",
     affiliateBadge: "Affiliate",
+    /** Announced when the drawer appears after a teacher shares a link. */
+    appearedAnnouncement: "Shopping suggestions are now available below the conversation.",
   },
   /** The pinned booking summary at the top of a thread. */
   bookingBanner: {

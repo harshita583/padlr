@@ -46,14 +46,6 @@ export const threads: Thread[] = [
         body: "These are what I start everyone on. Bamboo, 5 mm — thick enough that you can see what your hands are doing.",
       },
       {
-        id: "m6",
-        kind: "product",
-        authorId: "e1",
-        sentAt: isoAt(0, "09:39"),
-        gearId: "g2",
-        body: "And one ball of this. Don't buy more than one until you know you like it.",
-      },
-      {
         id: "m7",
         kind: "text",
         authorId: "e1",
