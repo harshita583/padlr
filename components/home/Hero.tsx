@@ -20,15 +20,8 @@ export function Hero({ sample }: { sample?: Expert }) {
       <Container className="relative pt-16 pb-20 sm:pt-24 sm:pb-28">
         <div className="grid items-center gap-14 lg:grid-cols-[1.3fr_0.7fr]">
           <div>
-            <h1 className="display text-[clamp(3rem,8.5vw,5.75rem)] text-olive">
-              {copy.headlineLines.map((line) => (
-                <span key={line} className="block">
-                  {line}
-                </span>
-              ))}
-              <span className="mt-1 inline-block -rotate-1 rounded-2xl bg-lemon px-4 pt-1 pb-2 text-ink">
-                {copy.headlineAccent}
-              </span>
+            <h1 className="display max-w-[14ch] text-[clamp(3rem,8vw,5.5rem)] text-olive">
+              {copy.headline}
             </h1>
 
             <p className="mt-7 max-w-xl text-[1.0625rem] leading-relaxed text-olive/85 sm:text-lg">

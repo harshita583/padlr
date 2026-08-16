@@ -12,8 +12,6 @@ export const brand = {
   tagline: "Learn it from someone down the street.",
   description:
     "Padlr connects you with local people who already know the thing you want to learn — and lets you book them by the hour, join their classes, or bring your friends along.",
-  /** Two-letter mark shown in the header badge. */
-  monogram: "Pa",
   email: "hello@padlr.example",
   city: "Boston, MA",
 } as const;

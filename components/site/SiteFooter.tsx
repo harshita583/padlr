@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { brand, footer } from "@/content";
 import { Container } from "@/components/ui/Primitives";
+import { PaddleMark } from "@/components/site/Logo";
 
 export function SiteFooter() {
   return (
@@ -9,11 +10,8 @@ export function SiteFooter() {
         <div className="grid gap-12 lg:grid-cols-[1.4fr_2fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <span
-                aria-hidden="true"
-                className="grid size-9 place-items-center rounded-xl bg-lemon font-display text-lg text-olive"
-              >
-                {brand.monogram}
+              <span className="grid size-9 place-items-center rounded-xl bg-lemon text-olive">
+                <PaddleMark />
               </span>
               <span className="display text-2xl">{brand.wordmark}</span>
             </div>

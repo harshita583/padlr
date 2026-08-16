@@ -13,9 +13,7 @@ export const home = {
   },
 
   hero: {
-    /** Rendered as stacked lines. Keep them short. */
-    headlineLines: ["Someone nearby", "already knows"] as const,
-    headlineAccent: "how.",
+    headline: "Someone nearby already knows how.",
     body: "Sourdough, sewing, standing on a surfboard, filing your own taxes. Search a skill, pick your neighbourhood, and book an hour with a real person who can show you.",
     search: {
       legend: "Find a teacher near you",

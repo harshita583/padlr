@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { brand, nav } from "@/content";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Primitives";
+import { PaddleMark } from "@/components/site/Logo";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
@@ -35,11 +36,8 @@ export function SiteHeader() {
             className="group flex items-center gap-2.5"
             aria-label={`${brand.name} — home`}
           >
-            <span
-              aria-hidden="true"
-              className="grid size-9 place-items-center rounded-xl bg-forest font-display text-lg text-lemon transition-transform duration-300 ease-[var(--ease-out-soft)] group-hover:-rotate-6"
-            >
-              {brand.monogram}
+            <span className="grid size-9 place-items-center rounded-xl bg-forest text-lemon transition-transform duration-300 ease-[var(--ease-out-soft)] group-hover:-rotate-6">
+              <PaddleMark />
             </span>
             <span className="display text-2xl tracking-tight">{brand.wordmark}</span>
           </Link>
