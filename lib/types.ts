@@ -107,7 +107,7 @@ export interface GearItem {
   price: string;
   blurb: string;
   url: string;
-  /** True when Passalong earns a commission — surfaces the disclosure label. */
+  /** True when Padlr earns a commission — surfaces the disclosure label. */
   affiliate: boolean;
   /** True when the vendor paid for placement — surfaces "Sponsored". */
   sponsored?: boolean;

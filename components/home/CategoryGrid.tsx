@@ -37,7 +37,7 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
               >
                 <Motif
                   variant={motifFor(category.slug)}
-                  className="[mask-image:linear-gradient(to_bottom,black_35%,transparent_85%)] transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-110"
+                  className="[mask-image:linear-gradient(to_bottom,black_0%,black_20%,transparent_60%)] transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-110"
                 />
 
                 <span className="relative block">
@@ -50,11 +50,11 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
                     {category.name}
                   </span>
                   {category.featured ? (
-                    <span className="mt-2 block max-w-sm text-[0.9375rem] leading-snug opacity-75">
+                    <span className="mt-2 block max-w-sm text-[0.9375rem] leading-snug opacity-90">
                       {category.blurb}
                     </span>
                   ) : null}
-                  <span className="mt-2 block text-[0.8125rem] font-semibold opacity-60">
+                  <span className="mt-2 block text-[0.8125rem] font-semibold opacity-70">
                     {category.teacherCount} teachers
                   </span>
                 </span>

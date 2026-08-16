@@ -51,8 +51,8 @@ export const common = {
   /** Shown wherever we surface a paid partnership. Required, do not remove. */
   disclosure: {
     short: "Affiliate",
-    long: "Passalong may earn a small commission on purchases made through these links. It never changes what you pay, and teachers are never paid to recommend a specific brand.",
+    long: "Padlr may earn a small commission on purchases made through these links. It never changes what you pay, and teachers are never paid to recommend a specific brand.",
     inChat:
-      "This is a shared shopping link. Passalong may earn a commission if you buy through it.",
+      "This is a shared shopping link. Padlr may earn a commission if you buy through it.",
   },
 } as const;

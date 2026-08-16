@@ -19,7 +19,7 @@ export const toneSurface: Record<Tone, string> = {
   sage: "bg-sage text-olive",
   sky: "bg-sky text-olive",
   lilac: "bg-lilac text-olive",
-  coral: "bg-coral text-paper",
+  coral: "bg-coral text-ink",
   olive: "bg-olive text-cream",
   cream: "bg-clay text-ink",
 };
@@ -41,7 +41,7 @@ export const toneIsDark: Record<Tone, boolean> = {
   sage: false,
   sky: false,
   lilac: false,
-  coral: true,
+  coral: false,
   olive: true,
   cream: false,
 };

@@ -6,15 +6,15 @@
  */
 
 export const brand = {
-  name: "Passalong",
+  name: "Padlr",
   /** Used as the browser tab suffix and in the header lockup. */
-  wordmark: "Passalong",
+  wordmark: "Padlr",
   tagline: "Learn it from someone down the street.",
   description:
-    "Passalong connects you with local people who already know the thing you want to learn — and lets you book them by the hour, join their classes, or bring your friends along.",
+    "Padlr connects you with local people who already know the thing you want to learn — and lets you book them by the hour, join their classes, or bring your friends along.",
   /** Two-letter mark shown in the header badge. */
   monogram: "Pa",
-  email: "hello@passalong.example",
+  email: "hello@padlr.example",
   city: "Boston, MA",
 } as const;
 
@@ -68,8 +68,8 @@ export const footer = {
       ],
     },
   ],
-  legal: "© 2026 Passalong. Made for people who like learning in person.",
-  socialLabel: "Follow Passalong",
+  legal: "© 2026 Padlr. Made for people who like learning in person.",
+  socialLabel: "Follow Padlr",
   social: [
     { label: "Instagram", href: "https://instagram.com" },
     { label: "TikTok", href: "https://tiktok.com" },

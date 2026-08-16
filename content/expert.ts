@@ -47,7 +47,7 @@ export const expert = {
     reviews: {
       title: "What learners said",
       emptyTitle: "No reviews yet",
-      emptyBody: "This teacher is new to Passalong.",
+      emptyBody: "This teacher is new to Padlr.",
     },
     classes: {
       title: "Classes they host",

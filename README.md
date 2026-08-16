@@ -1,4 +1,4 @@
-# Passalong
+# Padlr
 
 A marketplace for learning a skill from someone nearby. Search a skill and a
 location, find local teachers, book them by the hour, message them, join the

@@ -144,7 +144,7 @@ export default function TeachPage() {
         <Container className="text-center">
           <h2 className="display text-[clamp(2.5rem,7vw,5rem)]">
             {copy.finalCta.displayLines.map((line, i) => (
-              <span key={line} className={i === 1 ? "block text-lemon italic" : "block"}>
+              <span key={line} className={i === 1 ? "block text-lemon" : "block"}>
                 {line}
               </span>
             ))}

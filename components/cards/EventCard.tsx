@@ -42,7 +42,7 @@ export function EventCard({
       >
         <Motif
           variant={motifFor(event.slug)}
-          className="[mask-image:linear-gradient(to_bottom,black_35%,transparent_85%)] transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-110"
+          className="[mask-image:linear-gradient(to_bottom,black_0%,black_25%,transparent_70%)] transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-110"
         />
 
         <time

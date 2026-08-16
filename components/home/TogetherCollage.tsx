@@ -37,8 +37,8 @@ export function TogetherCollage() {
 
           <div className="order-1 max-w-lg text-center lg:order-2">
             <h2 className="display text-[clamp(3rem,8vw,5.5rem)] text-forest">
-              {copy.displayLines.map((line, i) => (
-                <span key={line} className={cn("block", i === 0 && "italic")}>
+              {copy.displayLines.map((line) => (
+                <span key={line} className="block">
                   {line}
                 </span>
               ))}

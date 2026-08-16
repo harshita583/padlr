@@ -26,8 +26,8 @@ export default async function CirclesPage() {
           <div className="max-w-2xl">
             <Eyebrow className="text-olive/60">{copy.hero.eyebrow}</Eyebrow>
             <h1 className="display mt-4 text-[clamp(3rem,8vw,5.75rem)] text-forest">
-              {copy.hero.displayLines.map((line, i) => (
-                <span key={line} className={i === 1 ? "block italic" : "block"}>
+              {copy.hero.displayLines.map((line) => (
+                <span key={line} className="block">
                   {line}
                 </span>
               ))}

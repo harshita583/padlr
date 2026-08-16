@@ -21,7 +21,7 @@ export const teach = {
   earnings: {
     eyebrow: "The money",
     title: "Set a rate, keep most of it",
-    body: "You choose your hourly rate. Passalong takes 15% to cover payments, insurance and support. Payouts land every Friday.",
+    body: "You choose your hourly rate. Padlr takes 15% to cover payments, insurance and support. Payouts land every Friday.",
     calculator: {
       legend: "Estimate what you'd earn",
       rateLabel: "Your hourly rate",
@@ -62,7 +62,7 @@ export const teach = {
     items: [
       {
         q: "Do I need a qualification?",
-        a: "No. Most teachers on Passalong are hobbyists who are simply further along than the person booking them. Learners can see your reviews and decide for themselves.",
+        a: "No. Most teachers on Padlr are hobbyists who are simply further along than the person booking them. Learners can see your reviews and decide for themselves.",
       },
       {
         q: "Where am I supposed to teach?",

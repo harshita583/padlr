@@ -43,7 +43,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
           <Eyebrow className="text-cream/50">{copy.index.eyebrow}</Eyebrow>
           <h1 className="display mt-4 text-[clamp(2.75rem,8vw,5.5rem)]">
             {copy.index.headlineLines.map((line, i) => (
-              <span key={line} className={i === 1 ? "block text-lemon italic" : "block"}>
+              <span key={line} className={i === 1 ? "block text-lemon" : "block"}>
                 {line}
               </span>
             ))}
