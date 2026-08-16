@@ -1,0 +1,54 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+import type { Tone } from "@/lib/types";
+
+/**
+ * Tone → Tailwind classes.
+ *
+ * Written out in full rather than interpolated, because Tailwind only ships
+ * classes it can see as complete strings in the source.
+ */
+export const toneSurface: Record<Tone, string> = {
+  lemon: "bg-lemon text-ink",
+  sage: "bg-sage text-olive",
+  sky: "bg-sky text-olive",
+  lilac: "bg-lilac text-olive",
+  coral: "bg-coral text-paper",
+  olive: "bg-olive text-cream",
+  cream: "bg-clay text-ink",
+};
+
+/** Softer version, for large fills behind body text. */
+export const toneWash: Record<Tone, string> = {
+  lemon: "bg-lemon-soft text-ink",
+  sage: "bg-sage-wash text-olive",
+  sky: "bg-sky/50 text-olive",
+  lilac: "bg-lilac/60 text-olive",
+  coral: "bg-coral/20 text-ink",
+  olive: "bg-olive/10 text-olive",
+  cream: "bg-clay/60 text-ink",
+};
+
+/** Whether a tone is dark enough to need light-on-dark focus rings. */
+export const toneIsDark: Record<Tone, boolean> = {
+  lemon: false,
+  sage: false,
+  sky: false,
+  lilac: false,
+  coral: true,
+  olive: true,
+  cream: false,
+};
+
+/** Deterministic tone picker, so the same id always gets the same colour. */
+export function toneFor(seed: string): Tone {
+  const tones: Tone[] = ["lemon", "sage", "sky", "lilac", "coral", "olive"];
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  return tones[hash % tones.length];
+}

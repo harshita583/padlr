@@ -1,26 +1,189 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ---------------------------------------------------------------------------
+   Design tokens.
+   These are the single source of truth for colour, type and shape. They are
+   plain CSS custom properties on purpose: the eventual React Native app can
+   read the same values from `lib/tokens.ts` without a rewrite.
+   --------------------------------------------------------------------------- */
+@theme {
+  /* Core surfaces */
+  --color-paper: #fffdf7;
+  --color-cream: #f7f2e8;
+  --color-clay: #e7ded0;
+
+  /* Ink */
+  --color-ink: #14180c;
+  --color-ink-soft: #4a5140;
+  --color-ink-faint: #7a8271;
+
+  /* Brand greens */
+  --color-olive: #232b14;
+  --color-olive-soft: #3a4622;
+  --color-sage: #a9c185;
+  --color-sage-deep: #7d9a58;
+  --color-sage-wash: #dfe8d0;
+  --color-forest: #143a22;
+
+  /* Accents */
+  --color-lemon: #efe04c;
+  --color-lemon-soft: #f7f0a6;
+  --color-sky: #c6d2f7;
+  --color-sky-deep: #4a63c8;
+  --color-coral: #e4633c;
+  --color-lilac: #e6d8f6;
+
+  /* Type */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-instrument), Georgia, "Times New Roman", serif;
+  --font-poster: var(--font-anton), "Arial Narrow", Impact, sans-serif;
+
+  /* Shape */
+  --radius-tile: 1.25rem;
+  --radius-card: 1.75rem;
+  --radius-slab: 2.25rem;
+
+  /* Depth */
+  --shadow-lift: 0 1px 2px rgb(20 24 12 / 0.05), 0 14px 34px -14px rgb(20 24 12 / 0.3);
+  --shadow-press: 0 1px 0 rgb(20 24 12 / 0.9);
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* A visible, high-contrast focus ring everywhere. Never remove this. */
+  :focus-visible {
+    outline: 3px solid var(--color-forest);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Dark surfaces need a light ring to stay visible. */
+  .on-dark :focus-visible {
+    outline-color: var(--color-lemon);
+  }
+
+  ::selection {
+    background-color: var(--color-lemon);
+    color: var(--color-ink);
+  }
+
+  /* Numerals in timers, prices and ratings should not jitter. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Screen-reader-only text that becomes visible on focus (skip links). */
+  .sr-only-focusable {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .sr-only-focusable:focus {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 100;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0.75rem 1.25rem;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    background-color: var(--color-forest);
+    color: var(--color-paper);
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  /* The editorial display treatment used for section titles. */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+  }
+
+  /* The condensed poster treatment (see the "WAKE UP FRESH" reference). */
+  .poster {
+    font-family: var(--font-poster);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 0.92;
+    text-transform: uppercase;
+  }
+}
+
+/* Marquee used by the testimonial rail. Pauses on hover and on focus-within so
+   keyboard users can read and click the cards. */
+@keyframes rail-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.rail-track {
+  animation: rail-scroll var(--rail-duration, 60s) linear infinite;
+}
+
+.rail:hover .rail-track,
+.rail:focus-within .rail-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .rail-track {
+    animation: none;
+  }
 }
