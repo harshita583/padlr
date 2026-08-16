@@ -22,6 +22,7 @@ import { events } from "./events";
 import { messages } from "./messages";
 import { circles } from "./circles";
 import { teach } from "./teach";
+import { join } from "./join";
 
 export const copy = {
   brand,
@@ -35,8 +36,22 @@ export const copy = {
   messages,
   circles,
   teach,
+  join,
 } as const;
 
 export type Copy = typeof copy;
 
-export { brand, nav, footer, common, home, discover, expert, events, messages, circles, teach };
+export {
+  brand,
+  nav,
+  footer,
+  common,
+  home,
+  discover,
+  expert,
+  events,
+  messages,
+  circles,
+  teach,
+  join,
+};

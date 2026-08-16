@@ -26,8 +26,8 @@ export const nav = {
   ],
   /** The link that opens the inbox. */
   messages: { label: "Messages", href: "/messages" },
-  signIn: { label: "Sign in", href: "/discover" },
-  cta: { label: "Get started", href: "/discover" },
+  signIn: { label: "Sign in", href: "/join" },
+  cta: { label: "Get started", href: "/join" },
   /** Accessible name for the mobile menu toggle. */
   menuOpenLabel: "Open main menu",
   menuCloseLabel: "Close main menu",

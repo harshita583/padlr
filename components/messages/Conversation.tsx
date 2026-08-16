@@ -9,6 +9,7 @@ import { Avatar } from "@/components/ui/Primitives";
 import { Button } from "@/components/ui/Button";
 import { BookingDialog, type BookingRequest } from "./BookingDialog";
 import { GearDrawer } from "./GearDrawer";
+import { ShareDialog } from "./ShareDialog";
 import { LinkPreview } from "./LinkPreview";
 import { formatDuration, formatPrice } from "@/lib/date";
 import { cn } from "@/lib/utils";
@@ -384,6 +385,7 @@ function MessageRow({
           booking={message.booking}
           time={message.time}
           partnerName={partner.name}
+          skill={partner.skill}
           onDecide={(status) => onDecide(message.id, status)}
         />
       </div>
@@ -426,15 +428,18 @@ function BookingMessage({
   booking,
   time,
   partnerName,
+  skill,
   onDecide,
 }: {
   booking: NonNullable<ChatMessage["booking"]>;
   time: string;
   partnerName: string;
+  skill: string;
   onDecide: (status: "confirmed" | "declined") => void;
 }) {
   const card = copy.bookingCard;
   const { status } = booking;
+  const [shareOpen, setShareOpen] = useState(false);
 
   const surface =
     status === "confirmed"
@@ -513,6 +518,27 @@ function BookingMessage({
             </button>
           </div>
         </div>
+      ) : null}
+
+      {/* Sharing is only offered once a lesson is actually confirmed — there's
+          nothing to announce before that, and a declined one shouldn't invite
+          a post. */}
+      {status === "confirmed" ? (
+        <>
+          <button
+            type="button"
+            onClick={() => setShareOpen(true)}
+            className="mt-4 w-full rounded-full border-2 border-forest/25 px-3 py-2 text-[0.8125rem] font-semibold text-forest transition-colors hover:border-forest/60"
+          >
+            {card.share}
+          </button>
+          <ShareDialog
+            open={shareOpen}
+            onClose={() => setShareOpen(false)}
+            skill={skill}
+            when={`on ${booking.dateLabel} at ${booking.timeLabel}`}
+          />
+        </>
       ) : null}
 
       <p className="tabular mt-3 text-[0.6875rem] text-ink/50">{time}</p>

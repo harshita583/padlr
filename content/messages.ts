@@ -121,5 +121,43 @@ export const messages = {
     approveReply: "That works — see you then. I'll message you the exact address the day before.",
     declineReply:
       "Sorry, I'm booked that afternoon. I've got Thursday evening or Saturday morning free if either suits?",
+    /** Only offered once a lesson is confirmed. */
+    share: "Share this",
+  },
+
+  /**
+   * Sharing a confirmed lesson.
+   *
+   * The exact address and the teacher's surname are never shareable — a public
+   * post saying where somebody teaches, and when they'll be alone with a
+   * stranger, is a safety problem. The date and time are opt-in for the same
+   * reason.
+   */
+  shareDialog: {
+    title: "Share your lesson",
+    intro:
+      "Tell people what you're learning. We leave out anything that says where your teacher lives.",
+    previewLabel: "What gets posted",
+    closeLabel: "Close sharing",
+    close: "Close",
+    /** The safety toggle. Off by default, deliberately. */
+    includeWhen: "Include the date and time",
+    includeWhenHint:
+      "Off by default. Posting when and where you'll be is worth a second thought — for you and for your teacher.",
+    neverShared: "Never included: the address, and your teacher's full name.",
+    copy: "Copy text",
+    copied: "Copied",
+    nativeShare: "Share…",
+    targetsLabel: "Share to",
+    targets: {
+      x: "X",
+      whatsapp: "WhatsApp",
+      facebook: "Facebook",
+    },
+    /** `skill` is the lesson subject; `when` is empty unless opted in. */
+    textFor: (skill: string, when: string) =>
+      when
+        ? `I'm learning ${skill} ${when} with a teacher near me, booked on Padlr.`
+        : `I'm learning ${skill} with a teacher near me, booked on Padlr.`,
   },
 } as const;
