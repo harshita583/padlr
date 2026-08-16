@@ -143,8 +143,8 @@ export default function TeachPage() {
       <Section className="bg-forest text-paper">
         <Container className="text-center">
           <h2 className="display text-[clamp(2.5rem,7vw,5rem)]">
-            {copy.finalCta.displayLines.map((line, i) => (
-              <span key={line} className={i === 1 ? "block text-lemon" : "block"}>
+            {copy.finalCta.displayLines.map((line) => (
+              <span key={line} className="block">
                 {line}
               </span>
             ))}
