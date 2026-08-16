@@ -6,6 +6,7 @@ import { Button, ButtonLink } from "@/components/ui/Button";
 import { Field, Input, Textarea } from "@/components/ui/Field";
 import { Avatar } from "@/components/ui/Primitives";
 import { cn } from "@/lib/utils";
+import { emptyStats, saveProfile } from "@/lib/profile";
 
 const BIO_MAX = 280;
 const STEPS = copy.steps;
@@ -87,8 +88,22 @@ export function JoinFlow() {
 
   function goNext() {
     if (!validate(step)) return;
-    if (step === STEPS.length - 1) setDone(true);
-    else setStep((s) => s + 1);
+    if (step === STEPS.length - 1) {
+      saveProfile({
+        firstName: draft.firstName.trim(),
+        lastInitial: draft.lastInitial.trim(),
+        email: draft.email.trim(),
+        neighbourhood: draft.neighbourhood.trim(),
+        bio: draft.bio.trim(),
+        learning: draft.learning.trim(),
+        idVerified: draft.idVerified,
+        createdAt: new Date().toISOString(),
+        stats: emptyStats,
+      });
+      setDone(true);
+    } else {
+      setStep((s) => s + 1);
+    }
   }
 
   async function runIdCheck() {

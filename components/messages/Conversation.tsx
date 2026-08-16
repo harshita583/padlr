@@ -13,6 +13,9 @@ import { ShareDialog } from "./ShareDialog";
 import { LinkPreview } from "./LinkPreview";
 import { formatDuration, formatPrice } from "@/lib/date";
 import { cn } from "@/lib/utils";
+import { newlyEarned } from "@/lib/badges";
+import { emptyStats, readProfile, recordLesson } from "@/lib/profile";
+import { BadgeAward } from "./BadgeAward";
 
 /** Serializable view model — the server does all date and money formatting. */
 export interface ChatMessage {
@@ -22,12 +25,16 @@ export interface ChatMessage {
   time: string;
   body?: string;
   gear?: GearItem;
+  /** Set when `kind === "system"` and the message announces a badge. */
+  badgeId?: string;
   booking?: {
     dateLabel: string;
     timeLabel: string;
     durationLabel: string;
     peopleLabel: string;
     totalLabel: string;
+    /** Kept as a number as well as a label, because badges count on it. */
+    people: number;
     status: "pending" | "confirmed" | "declined";
   };
 }
@@ -40,6 +47,8 @@ export interface ChatPartner {
   skill: string;
   hourlyRate: number;
   groupUplift: number;
+  /** Which craft this thread counts towards for badges. */
+  categorySlug: string;
 }
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -116,6 +125,7 @@ export function Conversation({
         peopleLabel:
           request.people === 1 ? "Just you" : `${request.people} people`,
         totalLabel: formatPrice(request.total),
+        people: request.people,
         status: "pending",
       },
     });
@@ -124,6 +134,8 @@ export function Conversation({
 
   /** The teacher's decision, played back into the thread. */
   function decideBooking(messageId: string, status: "confirmed" | "declined") {
+    const booked = items.find((m) => m.id === messageId)?.booking;
+
     setItems((prev) =>
       prev.map((m) =>
         m.id === messageId && m.booking
@@ -131,6 +143,21 @@ export function Conversation({
           : m,
       ),
     );
+
+    // A confirmed lesson is the thing that counts towards badges. Nothing
+    // happens for people without a profile — badges belong to an account.
+    if (status === "confirmed" && booked) {
+      const before = readProfile()?.stats ?? emptyStats;
+      const updated = recordLesson({
+        categorySlug: partner.categorySlug,
+        people: booked.people,
+      });
+      if (updated) {
+        for (const def of newlyEarned(before, updated.stats)) {
+          append({ kind: "system", mine: false, badgeId: def.id });
+        }
+      }
+    }
     void (async () => {
       setTyping(true);
       await wait(1400);
@@ -374,6 +401,14 @@ function MessageRow({
           time={message.time}
           note={message.body}
         />
+      </div>
+    );
+  }
+
+  if (message.kind === "system" && message.badgeId) {
+    return (
+      <div className="flex flex-col items-center">
+        <BadgeAward badgeId={message.badgeId} />
       </div>
     );
   }

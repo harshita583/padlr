@@ -137,23 +137,11 @@ export const messages = {
     title: "Share your lesson",
     intro:
       "Tell people what you're learning. We leave out anything that says where your teacher lives.",
-    previewLabel: "What gets posted",
-    closeLabel: "Close sharing",
-    close: "Close",
     /** The safety toggle. Off by default, deliberately. */
     includeWhen: "Include the date and time",
     includeWhenHint:
       "Off by default. Posting when and where you'll be is worth a second thought — for you and for your teacher.",
     neverShared: "Never included: the address, and your teacher's full name.",
-    copy: "Copy text",
-    copied: "Copied",
-    nativeShare: "Share…",
-    targetsLabel: "Share to",
-    targets: {
-      x: "X",
-      whatsapp: "WhatsApp",
-      facebook: "Facebook",
-    },
     /** `skill` is the lesson subject; `when` is empty unless opted in. */
     textFor: (skill: string, when: string) =>
       when

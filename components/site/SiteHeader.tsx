@@ -7,6 +7,7 @@ import { brand, nav } from "@/content";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Primitives";
 import { PaddleMark } from "@/components/site/Logo";
+import { HeaderAccount } from "@/components/site/HeaderAccount";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
@@ -70,9 +71,7 @@ export function SiteHeader() {
             >
               {nav.messages.label}
             </Link>
-            <ButtonLink href={nav.cta.href} size="sm" className="hidden sm:inline-flex">
-              {nav.cta.label}
-            </ButtonLink>
+            <HeaderAccount />
 
             <button
               type="button"

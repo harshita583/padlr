@@ -1,11 +1,23 @@
 import { messages as copy } from "@/content";
+import { getThreads } from "@/lib/data";
 import { ButtonLink } from "@/components/ui/Button";
+import { ThreadView } from "@/components/messages/ThreadView";
 
 /**
- * The empty pane shown beside the inbox on large screens. On small screens the
- * shell hides this and shows the thread list instead.
+ * The inbox landing page.
+ *
+ * On a wide screen it opens the most recent conversation rather than showing
+ * an empty pane — there's no reason to make someone click again when there's
+ * an obvious thing to show. On a narrow screen the shell hides this and shows
+ * the thread list instead. The empty state only appears when there genuinely
+ * are no conversations.
  */
-export default function MessagesIndexPage() {
+export default async function MessagesIndexPage() {
+  const threads = await getThreads();
+  const newest = threads[0];
+
+  if (newest) return <ThreadView id={newest.id} />;
+
   return (
     <div className="grid flex-1 place-items-center bg-cream/50 p-10 text-center">
       <div className="max-w-sm">

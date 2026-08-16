@@ -28,6 +28,11 @@ export const nav = {
   messages: { label: "Messages", href: "/messages" },
   signIn: { label: "Sign in", href: "/join" },
   cta: { label: "Get started", href: "/join" },
+  /** Shown in place of the CTA once someone has a profile. */
+  profile: {
+    href: "/profile",
+    labelFor: (name: string) => `Your profile — ${name}`,
+  },
   /** Accessible name for the mobile menu toggle. */
   menuOpenLabel: "Open main menu",
   menuCloseLabel: "Close main menu",

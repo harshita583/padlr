@@ -18,13 +18,20 @@ export interface ThreadSummary {
   unread: number;
 }
 
-export function ThreadList({ threads }: { threads: ThreadSummary[] }) {
+export function ThreadList({
+  threads,
+  activeId,
+}: {
+  threads: ThreadSummary[];
+  /** Overrides the route when the page shows a thread without being at its URL. */
+  activeId?: string;
+}) {
   const pathname = usePathname();
 
   return (
     <ul aria-label={copy.inbox.listLabel} className="flex flex-col">
       {threads.map((thread) => {
-        const active = pathname === `/messages/${thread.id}`;
+        const active = activeId ? activeId === thread.id : pathname === `/messages/${thread.id}`;
         return (
           <li key={thread.id}>
             <Link

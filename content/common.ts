@@ -48,6 +48,21 @@ export const common = {
     body: "Try widening your search radius, or clearing a filter or two.",
     action: "Clear filters",
   },
+  /** Chrome for any share overlay — lessons, badges, whatever comes next. */
+  share: {
+    previewLabel: "What gets posted",
+    closeLabel: "Close sharing",
+    close: "Close",
+    copy: "Copy text",
+    copied: "Copied",
+    nativeShare: "Share…",
+    targetsLabel: "Share to",
+    targets: {
+      x: "X",
+      whatsapp: "WhatsApp",
+      facebook: "Facebook",
+    },
+  },
   /** Shown wherever we surface a paid partnership. Required, do not remove. */
   disclosure: {
     short: "Affiliate",

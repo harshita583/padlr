@@ -21,6 +21,9 @@ export function MessagesShell({
 }) {
   const pathname = usePathname();
   const inThread = pathname !== "/messages";
+  // On /messages the newest thread is the one on screen, so it's the one that
+  // should read as current.
+  const activeId = inThread ? undefined : threads[0]?.id;
 
   return (
     <Container className="py-6 sm:py-10">
@@ -38,7 +41,7 @@ export function MessagesShell({
             <h1 className="display text-2xl">{copy.inbox.title}</h1>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto">
-            <ThreadList threads={threads} />
+            <ThreadList threads={threads} activeId={activeId} />
           </div>
         </div>
 
