@@ -1,10 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { circles as copy } from "@/content";
 import {
   CIRCLES_EVENT,
-  decideCircle,
   joinCircle,
   readCircles,
   removeCircle,
@@ -13,7 +13,7 @@ import {
 import { PROFILE_EVENT, displayName, readProfile } from "@/lib/profile";
 import { quoteCircle } from "@/lib/pricing";
 import { formatPrice, formatRelativeDay, formatTime } from "@/lib/date";
-import { Badge, Eyebrow, SectionHeading } from "@/components/ui/Primitives";
+import { Badge, Eyebrow } from "@/components/ui/Primitives";
 import { Button } from "@/components/ui/Button";
 import { ShareSheet } from "@/components/share/ShareSheet";
 import { CreateCircleDialog, type CircleCategoryOption, type CircleTeacherOption } from "./CreateCircleDialog";
@@ -262,34 +262,12 @@ function MyCircleCard({ circle, hostName }: { circle: MyCircle; hostName: string
         </>
       ) : null}
 
-      {/* The teacher has to agree before anyone can take a seat. */}
+      {/* The teacher has to agree before anyone can take a seat, and that
+          conversation is where they answer. */}
       {circle.status === "pending" ? (
-        <>
-          <p className="mt-4 text-[0.8125rem] leading-relaxed text-ink-soft">
-            {mine.pendingNote}
-          </p>
-          <div className="mt-4 border-t border-dashed border-ink/25 pt-3">
-            <p className="text-[0.625rem] font-bold tracking-[0.12em] text-ink/45 uppercase">
-              {mine.teacherControlsLabel}
-            </p>
-            <div className="mt-2 flex gap-2">
-              <button
-                type="button"
-                onClick={() => decideCircle(circle.id, "open")}
-                className="flex-1 rounded-full bg-forest px-3 py-2 text-[0.8125rem] font-semibold text-paper transition-colors hover:bg-olive"
-              >
-                {mine.approve}
-              </button>
-              <button
-                type="button"
-                onClick={() => decideCircle(circle.id, "declined")}
-                className="flex-1 rounded-full border-2 border-ink/20 px-3 py-2 text-[0.8125rem] font-semibold transition-colors hover:border-ink/40"
-              >
-                {mine.decline}
-              </button>
-            </div>
-          </div>
-        </>
+        <p className="mt-4 text-[0.8125rem] leading-relaxed text-ink-soft">
+          {mine.pendingNote}
+        </p>
       ) : null}
 
       {circle.status === "declined" ? (
@@ -306,6 +284,13 @@ function MyCircleCard({ circle, hostName }: { circle: MyCircle; hostName: string
           </button>
         </>
       ) : null}
+
+      <Link
+        href={`/messages/${circle.id}`}
+        className="mt-6 block rounded-full border-2 border-forest/25 px-4 py-2.5 text-center text-[0.8125rem] font-semibold text-forest transition-colors hover:border-forest/60"
+      >
+        {mine.openThread(circle.teacherName)}
+      </Link>
 
       <span className="sr-only">{hostName}</span>
     </article>

@@ -33,6 +33,7 @@ export default async function CirclesPage() {
     .map((e) => ({
       id: e.id,
       name: e.name,
+      initials: e.initials,
       slug: e.slug,
       neighbourhood: e.neighbourhood,
       hourlyRate: e.hourlyRate,

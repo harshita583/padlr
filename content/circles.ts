@@ -126,11 +126,11 @@ export const circles = {
     statusPending: (name: string) => `Waiting on ${name}`,
     statusOpen: "Open — share the link",
     statusDeclined: "Teacher couldn't make it",
-    pendingNote: "Nobody can take a seat until the teacher agrees to host it.",
+    pendingNote:
+      "The request is sitting in your messages. Nobody can take a seat until the teacher agrees to host it.",
     declinedNote: "No charge. Try another time, or another teacher.",
-    teacherControlsLabel: "Teacher's side — demo only",
-    approve: "Agree to host",
-    decline: "Can't make it",
+    /** The handshake happens in the conversation, same as a booking. */
+    openThread: (name: string) => `Open the conversation with ${name}`,
     shareAction: "Share the link",
     copyLink: "Copy link",
     copied: "Link copied",

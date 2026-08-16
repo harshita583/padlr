@@ -1,8 +1,10 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { messages as copy } from "@/content";
+import { CIRCLES_EVENT, circleInitials, readCircles } from "@/lib/circlesStore";
+import { formatRelativeDay, formatTime } from "@/lib/date";
 import { ThreadList, type ThreadSummary } from "./ThreadList";
 import { Container } from "@/components/ui/Primitives";
 import { cn } from "@/lib/utils";
@@ -21,9 +23,42 @@ export function MessagesShell({
 }) {
   const pathname = usePathname();
   const inThread = pathname !== "/messages";
-  // On /messages the newest thread is the one on screen, so it's the one that
-  // should read as current.
+  // On /messages the newest seeded thread is the one on screen, so it's the one
+  // that should read as current — circles don't change that.
   const activeId = inThread ? undefined : threads[0]?.id;
+
+  // The inbox is a fixed-height, app-like screen, so it should never open
+  // part-scrolled. Arriving from somewhere further down a long page (the
+  // circles list, say) otherwise leaves the card clipped under the header.
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [pathname]);
+
+  // Circles live in localStorage, which the server can't see, so they're merged
+  // in after mount. Newest first, above the seeded conversations.
+  const [circleThreads, setCircleThreads] = useState<ThreadSummary[]>([]);
+
+  useEffect(() => {
+    const read = () =>
+      setCircleThreads(
+        readCircles().map((circle) => {
+          const relative = formatRelativeDay(circle.createdAt);
+          return {
+            id: circle.id,
+            name: circle.teacherName,
+            initials: circleInitials(circle),
+            tone: circle.tone,
+            skill: circle.title,
+            preview: copy.inbox.circlePreview[circle.status],
+            time: relative === "Today" ? formatTime(circle.createdAt) : relative,
+            unread: 0,
+          };
+        }),
+      );
+    read();
+    window.addEventListener(CIRCLES_EVENT, read);
+    return () => window.removeEventListener(CIRCLES_EVENT, read);
+  }, []);
 
   return (
     <Container className="py-6 sm:py-10">
@@ -41,7 +76,7 @@ export function MessagesShell({
             <h1 className="display text-2xl">{copy.inbox.title}</h1>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto">
-            <ThreadList threads={threads} activeId={activeId} />
+            <ThreadList threads={[...circleThreads, ...threads]} activeId={activeId} />
           </div>
         </div>
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { circles as copy } from "@/content";
 import type { BookableDay, Tone } from "@/lib/types";
@@ -16,6 +17,7 @@ const create = copy.create;
 export interface CircleTeacherOption {
   id: string;
   name: string;
+  initials: string;
   slug: string;
   neighbourhood: string;
   hourlyRate: number;
@@ -59,6 +61,7 @@ export function CreateCircleDialog({
 }) {
   const id = useId();
   const ref = useRef<HTMLDialogElement>(null);
+  const router = useRouter();
 
   const [categorySlug, setCategorySlug] = useState("");
   const [skill, setSkill] = useState("");
@@ -126,13 +129,14 @@ export function CreateCircleDialog({
     if (!slot || !selectedDay) return setError(create.errors.slot);
     if (!title.trim()) return setError(create.errors.title);
 
-    createCircle({
+    const circle = createCircle({
       title: title.trim(),
       categorySlug,
       skill: skill.trim(),
       level,
       teacherId: teacher.id,
       teacherName: teacher.name,
+      teacherInitials: teacher.initials,
       teacherSlug: teacher.slug,
       neighbourhood: teacher.neighbourhood,
       date: selectedDay.date,
@@ -145,6 +149,9 @@ export function CreateCircleDialog({
       host,
     });
     onClose();
+    // The request is a message to the teacher, so land where the answer will
+    // arrive rather than leaving it sitting on a page nobody rechecks.
+    router.push(`/messages/${circle.id}`);
   }
 
   return (

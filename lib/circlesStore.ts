@@ -30,6 +30,8 @@ export interface MyCircle {
   teacherId: string;
   teacherName: string;
   teacherSlug: string;
+  /** For the avatar in the conversation. Absent on circles saved before this. */
+  teacherInitials?: string;
   neighbourhood: string;
   /** ISO date, e.g. "2026-08-22". */
   date: string;
@@ -67,6 +69,21 @@ export function readCircles(): MyCircle[] {
   } catch {
     return [];
   }
+}
+
+export function readCircle(id: string): MyCircle | null {
+  return readCircles().find((c) => c.id === id) ?? null;
+}
+
+/** Falls back to the name for circles saved before initials were stored. */
+export function circleInitials(circle: MyCircle): string {
+  if (circle.teacherInitials) return circle.teacherInitials;
+  return circle.teacherName
+    .split(/\s+/)
+    .map((word) => word[0] ?? "")
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 }
 
 function writeAll(circles: MyCircle[]) {

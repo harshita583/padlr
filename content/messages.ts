@@ -15,6 +15,12 @@ export const messages = {
     emptyCta: { label: "Find a teacher", href: "/discover" },
     unreadLabel: (n: number) => `${n} unread`,
     openConversation: (name: string) => `Open conversation with ${name}`,
+    /** One-line previews for a circle request sitting in the inbox. */
+    circlePreview: {
+      pending: "Circle request — waiting on them",
+      open: "Circle confirmed — share the link",
+      declined: "Couldn't host this one",
+    },
   },
   thread: {
     landmarkLabel: "Conversation",
@@ -123,6 +129,48 @@ export const messages = {
       "Sorry, I'm booked that afternoon. I've got Thursday evening or Saturday morning free if either suits?",
     /** Only offered once a lesson is confirmed. */
     share: "Share this",
+  },
+
+  /**
+   * A circle request, sent to the teacher as soon as it's created.
+   *
+   * Same handshake as a booking: it sits in the conversation until the teacher
+   * agrees, and nobody can take a seat before then.
+   */
+  circleCard: {
+    pendingTitle: (name: string) => `Waiting on ${name}`,
+    openTitle: "Circle confirmed",
+    declinedTitle: "Not this time",
+    lengthLabel: "Length",
+    seatsLabel: "Seats",
+    levelLabel: "Level",
+    eachLabel: "Each right now",
+    seatsFor: (open: number, total: number) => `${open} of ${total} open`,
+    pendingNote:
+      "Nobody can take a seat until they agree to host it, and you haven't been charged.",
+    openNote: "Share the link — the price drops for everyone each time somebody joins.",
+    declinedNote: "No charge. Try another time, or another teacher.",
+    /** Mirrors the booking card: both sides of the handshake in one window. */
+    teacherControlsLabel: "Teacher's side — demo only",
+    approve: "Agree to host",
+    decline: "Can't make it",
+    approveReply: (seats: number) =>
+      `Happy to host that. Send the link round — I can take ${seats} of you, and the price comes down as they join.`,
+    declineReply:
+      "Sorry, I can't do a group that morning. If you can move it a week I'd be glad to — otherwise no hard feelings.",
+    manage: "Manage this circle",
+  },
+
+  /** A conversation opened by starting a circle rather than by messaging. */
+  circleThread: {
+    contextFor: (skill: string) => `Circle · ${skill}`,
+    /** The message sent on the learner's behalf when the circle is created. */
+    openingFor: (skill: string, when: string, seats: number) =>
+      `Hi — I'd like to get a small group together for ${skill}, ${when}. Up to ${seats} of us including me. Would you be up for hosting it?`,
+    missingTitle: "That circle isn't on this browser",
+    missingBody:
+      "Circles are saved to the device that made them, so a link from another browser won't open here yet.",
+    missingCta: { label: "See your circles", href: "/circles" },
   },
 
   /**

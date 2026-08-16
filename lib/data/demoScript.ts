@@ -36,6 +36,53 @@ export const fallbackReply: ScriptedReply = {
   ],
 };
 
+/**
+ * Replies for a conversation opened by starting a circle, where the teacher is
+ * weighing up hosting a group rather than a one-to-one hour.
+ */
+export const circleReplies: ScriptedReply[] = [
+  {
+    match: ["bring", "need", "buy", "kit", "equipment"],
+    typingMs: 2000,
+    messages: [
+      {
+        kind: "text",
+        body: "Nothing to buy before the first one — I keep enough spares for a group that size. If people want their own afterwards I'll tell you what's worth it.",
+      },
+    ],
+  },
+  {
+    match: ["where", "address", "place", "meet"],
+    typingMs: 1700,
+    messages: [
+      {
+        kind: "text",
+        body: "My place, and I'll send the exact address once everyone's confirmed. There's room for that many round the table.",
+      },
+    ],
+  },
+  {
+    match: ["friend", "more", "another", "extra", "bigger"],
+    typingMs: 1800,
+    messages: [
+      {
+        kind: "text",
+        body: "Bring whoever you like up to the number you've set. Past that it stops being a circle and I'd rather run it as a proper class.",
+      },
+    ],
+  },
+  {
+    match: ["cheap", "price", "cost", "pay", "split"],
+    typingMs: 1900,
+    messages: [
+      {
+        kind: "text",
+        body: "You each pay your own share and it drops every time somebody joins — you'll see the number move on the card above.",
+      },
+    ],
+  },
+];
+
 export const demoScripts: Record<string, ScriptedReply[]> = {
   /* Rosa — knitting. Already has a shared link in the history. */
   t1: [

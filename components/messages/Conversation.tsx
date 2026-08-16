@@ -15,18 +15,22 @@ import { formatDuration, formatPrice } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { newlyEarned } from "@/lib/badges";
 import { emptyStats, readProfile, recordLesson } from "@/lib/profile";
+import { decideCircle } from "@/lib/circlesStore";
 import { BadgeAward } from "./BadgeAward";
+import { CircleRequestMessage } from "./CircleRequestMessage";
 
 /** Serializable view model — the server does all date and money formatting. */
 export interface ChatMessage {
   id: string;
-  kind: "text" | "product" | "booking" | "system";
+  kind: "text" | "product" | "booking" | "system" | "circle";
   mine: boolean;
   time: string;
   body?: string;
   gear?: GearItem;
   /** Set when `kind === "system"` and the message announces a badge. */
   badgeId?: string;
+  /** Set when `kind === "circle"`. The card reads the circle itself. */
+  circleId?: string;
   booking?: {
     dateLabel: string;
     timeLabel: string;
@@ -49,6 +53,8 @@ export interface ChatPartner {
   groupUplift: number;
   /** Which craft this thread counts towards for badges. */
   categorySlug: string;
+  /** Replaces the skill-and-rate sub-header where a rate would mislead. */
+  contextLine?: string;
 }
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -174,6 +180,31 @@ export function Conversation({
     })();
   }
 
+  /** The teacher's answer to a circle request, played back into the thread. */
+  function decideCircleRequest(
+    circleId: string,
+    status: "open" | "declined",
+    seats: number,
+  ) {
+    // The card re-reads the store, so nothing here has to touch the message.
+    decideCircle(circleId, status);
+
+    void (async () => {
+      setTyping(true);
+      await wait(1600);
+      if (cancelled.current) return;
+      setTyping(false);
+      append({
+        kind: "text",
+        mine: false,
+        body:
+          status === "open"
+            ? copy.circleCard.approveReply(seats)
+            : copy.circleCard.declineReply,
+      });
+    })();
+  }
+
   /** Keyword match first, then the next unused reply, then the fallback. */
   function pickReply(text: string): ScriptedReply {
     const said = text.toLowerCase();
@@ -246,17 +277,21 @@ export function Conversation({
           <p className="truncate text-xs text-ink-faint">
             {typing
               ? copy.thread.typingLabel(partner.name)
-              : copy.thread.contextFor(partner.skill, partner.hourlyRate)}
+              : (partner.contextLine ??
+                copy.thread.contextFor(partner.skill, partner.hourlyRate))}
           </p>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setBookingOpen(true)}
-        >
-          {copy.bookingDialog.open}
-        </Button>
+        {/* Nothing to book against when the thread has no availability. */}
+        {days.length > 0 ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setBookingOpen(true)}
+          >
+            {copy.bookingDialog.open}
+          </Button>
+        ) : null}
       </div>
 
       <BookingDialog
@@ -289,6 +324,7 @@ export function Conversation({
             message={message}
             partner={partner}
             onDecide={decideBooking}
+            onCircleDecide={decideCircleRequest}
           />
         ))}
 
@@ -385,12 +421,28 @@ function MessageRow({
   message,
   partner,
   onDecide,
+  onCircleDecide,
 }: {
   message: ChatMessage;
   partner: ChatPartner;
   onDecide: (id: string, status: "confirmed" | "declined") => void;
+  onCircleDecide: (circleId: string, status: "open" | "declined", seats: number) => void;
 }) {
   const align = message.mine ? "items-end" : "items-start";
+
+  const { circleId } = message;
+  if (message.kind === "circle" && circleId) {
+    return (
+      <div className={cn("flex flex-col gap-1.5", align)}>
+        <CircleRequestMessage
+          circleId={circleId}
+          time={message.time}
+          partnerName={partner.name}
+          onDecide={(status, seats) => onCircleDecide(circleId, status, seats)}
+        />
+      </div>
+    );
+  }
 
   if (message.kind === "product" && message.gear) {
     return (
