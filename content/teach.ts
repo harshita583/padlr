@@ -247,7 +247,7 @@ export const teach = {
       },
       {
         q: "Can I recommend equipment to learners?",
-        a: "Yes, and you can share shopping links in chat. If a link earns a commission, both you and the learner see a label on it. You're never paid to push a specific brand.",
+        a: "Yes — share a link in chat, and if it's the kind that pays a commission, that commission is yours, not Padlr's. The learner sees a label on it either way, so there's no surprise.",
       },
       {
         q: "How do taxes work?",

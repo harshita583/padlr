@@ -11,9 +11,11 @@ const drawer = copy.gearDrawer;
 /**
  * The shopping drawer above the composer.
  *
- * Four rules it has to obey:
- *  - Nothing commercial exists here until the teacher has shared a link
- *    (`available`). Before that the whole component renders nothing.
+ * Three rules it has to obey:
+ *  - It's there from the first message, in every conversation — a learner
+ *    shouldn't have to wait for the teacher to share something before seeing
+ *    what the lesson usually calls for. It only disappears if this teacher's
+ *    craft genuinely has nothing relevant (`items` is empty).
  *  - One control, and it's the title line itself. No close button, no chevron.
  *  - It never steals height from the conversation: open, it floats over the
  *    message log rather than pushing it.
@@ -21,12 +23,9 @@ const drawer = copy.gearDrawer;
  */
 export function GearDrawer({
   items,
-  available,
   openSignal,
 }: {
   items: GearItem[];
-  /** True once the teacher has shared something in this conversation. */
-  available: boolean;
   /** Increment to pop the drawer open — e.g. when a new link arrives. */
   openSignal: number;
 }) {
@@ -51,7 +50,7 @@ export function GearDrawer({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
-  if (!available || items.length === 0) return null;
+  if (items.length === 0) return null;
 
   return (
     <div className="relative shrink-0">

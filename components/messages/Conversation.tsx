@@ -93,9 +93,6 @@ export function Conversation({
     [gearItems],
   );
 
-  /** The drawer only exists once the teacher has actually shared something. */
-  const teacherHasShared = items.some((m) => m.kind === "product" && !m.mine);
-
   // Stop any in-flight scripted reply if the component goes away.
   useEffect(() => {
     cancelled.current = false;
@@ -343,12 +340,9 @@ export function Conversation({
         {typing ? <TypingIndicator name={partner.name} /> : null}
       </div>
 
-      {/* Shopping drawer — hidden until the teacher shares a link */}
-      <GearDrawer
-        items={gearItems}
-        available={teacherHasShared}
-        openSignal={openSignal}
-      />
+      {/* Shopping drawer — present from the first message, on-topic for
+          whatever this teacher teaches */}
+      <GearDrawer items={gearItems} openSignal={openSignal} />
 
       {/* Composer */}
       <div className="border-t border-ink/8 px-4 py-3">

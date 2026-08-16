@@ -12,7 +12,7 @@ import type { Category, Circle, Event, Expert, GearItem, Thread } from "@/lib/ty
 import { categories } from "./categories";
 import { experts } from "./experts";
 import { events } from "./events";
-import { gear } from "./gear";
+import { gear, gearForCategories } from "./gear";
 import { threads } from "./threads";
 import { circles } from "./circles";
 import { demoScripts, type ScriptedReply } from "./demoScript";
@@ -218,13 +218,11 @@ export async function getGearByIds(ids: string[]): Promise<GearItem[]> {
 }
 
 /**
- * Gear to show alongside a search. Falls back to a general selection so the
- * rail is never empty.
+ * Gear to show alongside a lesson. Every category has at least one relevant
+ * item, so this never has to pad the list with something off-topic to fill it.
  */
-export async function getGearForCategories(slugs: string[], limit = 6): Promise<GearItem[]> {
-  const matched = gear.filter((g) => g.categorySlugs.some((s) => slugs.includes(s)));
-  const rest = gear.filter((g) => !matched.includes(g));
-  return [...matched, ...rest].slice(0, limit);
+export async function getGearForCategories(slugs: string[], limit = 8): Promise<GearItem[]> {
+  return gearForCategories(slugs, limit);
 }
 
 /* -------------------------------------------------------------------------- */

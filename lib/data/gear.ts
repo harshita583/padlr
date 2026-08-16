@@ -3,6 +3,9 @@ import type { GearItem } from "@/lib/types";
 /**
  * Shopping links. `affiliate` and `sponsored` drive the disclosure labels the
  * UI is required to show — do not render one of these without them.
+ *
+ * Every category needs at least one item here, or a lesson in it gets padded
+ * with gear from an unrelated craft — see `gearForCategories` below.
  */
 export const gear: GearItem[] = [
   {
@@ -139,4 +142,79 @@ export const gear: GearItem[] = [
     affiliate: true,
     categorySlugs: ["making"],
   },
+  {
+    id: "g13",
+    name: "Tow float with dry pouch",
+    vendor: "Sea Legs",
+    tone: "sky",
+    price: "$28",
+    blurb: "Keeps you visible to boats and your phone dry. Non-negotiable once you're past the breakers.",
+    url: "https://example.com/tow-float",
+    affiliate: true,
+    categorySlugs: ["outdoors"],
+  },
+  {
+    id: "g14",
+    name: "Baseplate compass",
+    vendor: "Long Way Round",
+    tone: "olive",
+    price: "$18",
+    blurb: "The kind that actually teaches you to read a map, not just point north.",
+    url: "https://example.com/compass",
+    affiliate: false,
+    categorySlugs: ["outdoors"],
+  },
+  {
+    id: "g15",
+    name: "Pocket vocabulary notebook",
+    vendor: "Fernweh Supply",
+    tone: "cream",
+    price: "$9",
+    blurb: "Small enough for a coat pocket. Write the phrase down the moment you hear it, not after.",
+    url: "https://example.com/vocab-notebook",
+    affiliate: true,
+    categorySlugs: ["language"],
+  },
+  {
+    id: "g16",
+    name: "Blank flashcard deck, 200 cards",
+    vendor: "Fernweh Supply",
+    tone: "lilac",
+    price: "$7",
+    blurb: "Write your own. The ready-made decks never have the one phrase you actually needed.",
+    url: "https://example.com/flashcards",
+    affiliate: true,
+    categorySlugs: ["language"],
+  },
+  {
+    id: "g17",
+    name: "Weekly budgeting ledger",
+    vendor: "Plainly Put",
+    tone: "lemon",
+    price: "$15",
+    blurb: "One page per week. Easier to actually keep up than an app you'll delete by March.",
+    url: "https://example.com/ledger",
+    affiliate: true,
+    categorySlugs: ["money"],
+  },
+  {
+    id: "g18",
+    name: "Expanding file folder, 12-pocket",
+    vendor: "Plainly Put",
+    tone: "sage",
+    price: "$13",
+    blurb: "Somewhere for the payslips and receipts before the lesson, instead of a shoebox during it.",
+    url: "https://example.com/file-folder",
+    affiliate: false,
+    categorySlugs: ["money"],
+  },
 ];
+
+/**
+ * Gear relevant to the given categories, strictly — no padding with items
+ * from other crafts. A short, on-topic list beats a full one that includes
+ * things that have nothing to do with the lesson.
+ */
+export function gearForCategories(slugs: string[], limit = 8): GearItem[] {
+  return gear.filter((g) => g.categorySlugs.some((s) => slugs.includes(s))).slice(0, limit);
+}

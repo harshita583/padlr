@@ -9,6 +9,7 @@ import {
   type MyCircle,
 } from "@/lib/circlesStore";
 import { circleReplies } from "@/lib/data/demoScript";
+import { gearForCategories } from "@/lib/data/gear";
 import { formatRelativeDay, formatTime } from "@/lib/date";
 import { ButtonLink } from "@/components/ui/Button";
 import { Conversation, type ChatMessage } from "./Conversation";
@@ -90,7 +91,7 @@ export function CircleThread({ id }: { id: string }) {
         categorySlug: circle.categorySlug,
       }}
       initialMessages={initialMessages}
-      gearItems={[]}
+      gearItems={gearForCategories([circle.categorySlug])}
       demo={circleReplies}
       days={[]}
     />
