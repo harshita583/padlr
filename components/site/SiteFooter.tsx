@@ -10,7 +10,7 @@ export function SiteFooter() {
         <div className="grid gap-12 lg:grid-cols-[1.4fr_2fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="grid size-9 place-items-center rounded-xl bg-lemon text-olive">
+              <span className="grid size-9 place-items-center rounded-xl bg-forest text-white ring-1 ring-cream/25">
                 <PaddleMark />
               </span>
               <span className="display text-2xl">{brand.wordmark}</span>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { brand, common, discover } from "@/content";
-import { searchExperts } from "@/lib/data";
+import { getCategory, searchExperts } from "@/lib/data";
 import { Container, Eyebrow, Section } from "@/components/ui/Primitives";
 import { SearchForm } from "@/components/search/SearchForm";
 import { FilterBar } from "@/components/search/FilterBar";
@@ -27,6 +27,8 @@ export default async function DiscoverPage({
 }) {
   const params = await searchParams;
 
+  const categorySlug = one(params.category);
+  const category = categorySlug ? await getCategory(categorySlug) : undefined;
   const q = one(params.q) ?? "";
   const where = one(params.where) ?? brand.city;
   const sort = one(params.sort);
@@ -38,6 +40,7 @@ export default async function DiscoverPage({
   const experts = await searchExperts({
     q,
     where,
+    categorySlug,
     sort,
     format: format === "any" ? undefined : format,
     availability,
@@ -69,7 +72,7 @@ export default async function DiscoverPage({
           <div className="flex flex-col gap-2">
             <Eyebrow>{discover.header.eyebrow}</Eyebrow>
             <h1 className="display text-[clamp(2rem,5vw,3.5rem)]">
-              {discover.header.titleFor(q, where)}
+              {discover.header.titleFor(category?.name ?? q, where)}
             </h1>
             <p aria-live="polite" className="text-[1.0625rem] text-ink-soft">
               {discover.header.countFor(experts.length)}

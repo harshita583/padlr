@@ -58,20 +58,38 @@ export async function getExpertById(id: string): Promise<Expert | undefined> {
   return experts.find((e) => e.id === id);
 }
 
+/** Lowercase, strip punctuation, drop noise words like "&" and "and". */
+function tokenise(value: string): string[] {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .split(" ")
+    .filter((w) => w.length > 1 && w !== "and" && w !== "the");
+}
+
 function matchesQuery(expert: Expert, q: string): boolean {
-  const needle = q.trim().toLowerCase();
-  if (!needle) return true;
-  const words = needle.split(/\s+/);
-  const haystack = [
-    expert.name,
-    expert.headline,
-    expert.bio,
-    expert.neighbourhood,
-    ...expert.skills,
-    ...expert.categories,
-  ]
-    .join(" ")
-    .toLowerCase();
+  const words = tokenise(q);
+  if (words.length === 0) return true;
+
+  // Category *names* are in the haystack too, so searching "textiles" or
+  // "yarn" finds everyone in that category, not just people who happen to
+  // have typed the word into their skills.
+  const categoryNames = expert.categories
+    .map((slug) => categories.find((c) => c.slug === slug)?.name ?? "")
+    .join(" ");
+
+  const haystack = tokenise(
+    [
+      expert.name,
+      expert.headline,
+      expert.bio,
+      expert.neighbourhood,
+      categoryNames,
+      ...expert.skills,
+      ...expert.categories,
+    ].join(" "),
+  ).join(" ");
+
   // Every word must appear somewhere. Good enough for a mock; a real
   // implementation would use Postgres full-text search or Typesense.
   return words.every((w) => haystack.includes(w));

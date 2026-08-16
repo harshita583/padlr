@@ -36,7 +36,7 @@ export function SiteHeader() {
             className="group flex items-center gap-2.5"
             aria-label={`${brand.name} — home`}
           >
-            <span className="grid size-9 place-items-center rounded-xl bg-forest text-lemon transition-transform duration-300 ease-[var(--ease-out-soft)] group-hover:-rotate-6">
+            <span className="grid size-9 place-items-center rounded-xl bg-forest text-white transition-transform duration-300 ease-[var(--ease-out-soft)] group-hover:-rotate-6">
               <PaddleMark />
             </span>
             <span className="display text-2xl tracking-tight">{brand.wordmark}</span>

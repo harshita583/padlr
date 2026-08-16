@@ -29,7 +29,7 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
               )}
             >
               <Link
-                href={`/discover?q=${encodeURIComponent(category.name)}`}
+                href={`/discover?category=${category.slug}`}
                 className={cn(
                   "group relative flex h-full flex-col justify-end overflow-hidden rounded-[var(--radius-card)] p-5 transition-transform duration-300 ease-[var(--ease-out-soft)] hover:-translate-y-1 sm:p-6",
                   toneSurface[category.tone],
