@@ -1,10 +1,18 @@
 import type { Metadata } from "next";
 import { circles as copy } from "@/content";
-import { getCircles } from "@/lib/data";
+import { getCategories, getCircles, getExperts } from "@/lib/data";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container, Eyebrow, Section, SectionHeading } from "@/components/ui/Primitives";
 import { CircleCard } from "@/components/cards/CircleCard";
 import { Faq } from "@/components/ui/Faq";
+import { MyCircles } from "@/components/circles/MyCircles";
+import type { CircleTeacherOption } from "@/components/circles/CreateCircleDialog";
+import {
+  formatDayNumber,
+  formatDayShort,
+  formatMonthShort,
+  formatTime,
+} from "@/lib/date";
 
 export const metadata: Metadata = {
   title: copy.meta.title,
@@ -12,7 +20,35 @@ export const metadata: Metadata = {
 };
 
 export default async function CirclesPage() {
-  const list = await getCircles();
+  const [list, categories, experts] = await Promise.all([
+    getCircles(),
+    getCategories(),
+    getExperts(),
+  ]);
+
+  // Only what the create dialog needs, with dates formatted on the server so
+  // the client never does timezone maths.
+  const teacherOptions: CircleTeacherOption[] = experts
+    .filter((e) => e.formats.includes("group"))
+    .map((e) => ({
+      id: e.id,
+      name: e.name,
+      slug: e.slug,
+      neighbourhood: e.neighbourhood,
+      hourlyRate: e.hourlyRate,
+      groupUplift: e.groupUplift,
+      tone: e.tone,
+      categories: [...e.categories],
+      days: e.availability.map((day) => ({
+        date: day.date,
+        dayShort: formatDayShort(day.date),
+        dayNumber: formatDayNumber(day.date),
+        month: formatMonthShort(day.date),
+        slots: day.slots.map((slot) => ({ value: slot, label: formatTime(slot) })),
+      })),
+    }));
+
+  const categoryOptions = categories.map((c) => ({ slug: c.slug, name: c.name }));
 
   return (
     <>
@@ -34,7 +70,7 @@ export default async function CirclesPage() {
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-olive/80">{copy.hero.body}</p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <ButtonLink href={copy.hero.cta.href} size="lg">
+              <ButtonLink href="#your-circles" size="lg">
                 {copy.hero.cta.label}
               </ButtonLink>
               <ButtonLink href={copy.hero.secondary.href} size="lg" variant="outline">
@@ -44,6 +80,13 @@ export default async function CirclesPage() {
           </div>
         </Container>
       </div>
+
+      {/* Your circles */}
+      <Section id="your-circles" className="scroll-mt-24 bg-paper">
+        <Container>
+          <MyCircles categories={categoryOptions} teachers={teacherOptions} />
+        </Container>
+      </Section>
 
       {/* Pricing table */}
       <Section>

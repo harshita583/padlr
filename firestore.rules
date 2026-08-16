@@ -1,0 +1,211 @@
+rules_version = '2';
+
+// Padlr security rules.
+//
+// The app talks to Firestore directly from the browser, so these rules ARE the
+// backend's access control — there is no server in between to check anything.
+// Treat every change here as a security change.
+//
+// Shape of the trust model:
+//   - Teaching profiles and classes are public, because search has to work
+//     before anyone signs in.
+//   - Conversations and bookings are private to their two participants.
+//   - A learner can create a booking but never approve their own; only the
+//     teacher can move it to confirmed.
+//   - Anyone signed in can join an open circle, but only by adding themselves,
+//     and only while seats remain.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isUser(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Reference data — seeded, read-only to clients                    */
+    /* ---------------------------------------------------------------- */
+
+    match /categories/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /gear/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* User profiles                                                     */
+    /* ---------------------------------------------------------------- */
+
+    match /users/{uid} {
+      // Signed-in only: a teacher needs to see who's asking to come round,
+      // but a learner's bio isn't public to the open internet.
+      allow read: if signedIn();
+      allow create: if isUser(uid);
+      // The uid and creation time are immutable once set.
+      allow update: if isUser(uid)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isUser(uid);
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Teaching profiles — public, so search works signed out            */
+    /* ---------------------------------------------------------------- */
+
+    match /teachers/{uid} {
+      allow read: if true;
+      // A teaching profile is always owned by the account it belongs to.
+      allow create: if isUser(uid) && request.resource.data.uid == uid;
+      allow update: if isUser(uid) && request.resource.data.uid == resource.data.uid;
+      allow delete: if isUser(uid);
+
+      // Reviews are written by the learner who took the lesson.
+      match /reviews/{reviewId} {
+        allow read: if true;
+        allow create: if signedIn() && request.resource.data.authorId == request.auth.uid;
+        allow update, delete: if signedIn() && resource.data.authorId == request.auth.uid;
+      }
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Classes a teacher hosts — public listings                         */
+    /* ---------------------------------------------------------------- */
+
+    match /events/{eventId} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.hostId == request.auth.uid;
+      allow update, delete: if signedIn() && resource.data.hostId == request.auth.uid;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Conversations — strictly the two participants                     */
+    /* ---------------------------------------------------------------- */
+
+    match /threads/{threadId} {
+      function isParticipant() {
+        return signedIn() && request.auth.uid in resource.data.participantIds;
+      }
+
+      allow read: if isParticipant();
+      allow create: if signedIn()
+        && request.auth.uid in request.resource.data.participantIds
+        && request.resource.data.participantIds.size() == 2;
+      allow update: if isParticipant()
+        // Nobody can quietly add or remove a participant.
+        && request.resource.data.participantIds == resource.data.participantIds;
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        function inThread() {
+          return signedIn()
+            && request.auth.uid in get(/databases/$(database)/documents/threads/$(threadId)).data.participantIds;
+        }
+
+        allow read: if inThread();
+        // You can only ever send as yourself.
+        allow create: if inThread() && request.resource.data.authorId == request.auth.uid;
+        allow update, delete: if false;
+      }
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Bookings                                                          */
+    /* ---------------------------------------------------------------- */
+
+    match /bookings/{bookingId} {
+      function isLearner() {
+        return signedIn() && request.auth.uid == resource.data.learnerId;
+      }
+      function isTeacher() {
+        return signedIn() && request.auth.uid == resource.data.teacherId;
+      }
+
+      allow read: if isLearner() || isTeacher();
+
+      // A learner requests; it always starts pending. Nobody books on someone
+      // else's behalf, and nobody creates a pre-approved booking.
+      allow create: if signedIn()
+        && request.resource.data.learnerId == request.auth.uid
+        && request.resource.data.status == 'pending';
+
+      // Only the teacher decides. The learner can cancel their own request,
+      // and neither side can rewrite the price or the parties after the fact.
+      allow update: if (
+          (isTeacher() && request.resource.data.status in ['confirmed', 'declined'])
+          || (isLearner() && request.resource.data.status == 'cancelled')
+        )
+        && request.resource.data.learnerId == resource.data.learnerId
+        && request.resource.data.teacherId == resource.data.teacherId
+        && request.resource.data.total == resource.data.total
+        && changedKeys().hasOnly(['status', 'decidedAt']);
+
+      allow delete: if false;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Circles — open groups that get cheaper as they fill               */
+    /* ---------------------------------------------------------------- */
+
+    match /circles/{circleId} {
+      function isHost() {
+        return signedIn() && request.auth.uid == resource.data.hostId;
+      }
+
+      // Joining means adding exactly yourself, and nothing else about the
+      // circle may change in the same write.
+      // Joining writes the member's display name alongside their uid, so the
+      // member list renders without a read per person. They may only add their
+      // own key.
+      function namesTouchedOnlyBySelf() {
+        return !changedKeys().hasAny(['memberNames'])
+          || request.resource.data.memberNames.diff(resource.data.memberNames)
+               .affectedKeys().hasOnly([request.auth.uid]);
+      }
+
+      function joiningSelf() {
+        return changedKeys().hasOnly(['memberIds', 'memberNames'])
+          && namesTouchedOnlyBySelf()
+          && request.resource.data.memberIds.hasAll(resource.data.memberIds)
+          && request.resource.data.memberIds.size() == resource.data.memberIds.size() + 1
+          && request.auth.uid in request.resource.data.memberIds
+          && !(request.auth.uid in resource.data.memberIds)
+          // Seats are a hard cap, enforced here rather than in the UI.
+          && request.resource.data.memberIds.size() <= resource.data.seatsTotal;
+      }
+
+      function leavingSelf() {
+        return changedKeys().hasOnly(['memberIds', 'memberNames'])
+          && namesTouchedOnlyBySelf()
+          && resource.data.memberIds.hasAll(request.resource.data.memberIds)
+          && request.resource.data.memberIds.size() == resource.data.memberIds.size() - 1
+          && !(request.auth.uid in request.resource.data.memberIds)
+          && request.auth.uid in resource.data.memberIds;
+      }
+
+      allow read: if resource.data.visibility == 'open'
+        || (signedIn() && request.auth.uid in resource.data.memberIds)
+        || isHost();
+
+      allow create: if signedIn()
+        && request.resource.data.hostId == request.auth.uid
+        && request.auth.uid in request.resource.data.memberIds
+        && request.resource.data.seatsTotal >= 2
+        && request.resource.data.seatsTotal <= 12;
+
+      allow update: if isHost() || (signedIn() && (joiningSelf() || leavingSelf()));
+      allow delete: if isHost();
+    }
+  }
+}

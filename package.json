@@ -6,10 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "emulators": "firebase emulators:start --project padlr-dev",
+    "seed": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_PROJECT_ID=padlr-dev tsx scripts/seed.ts",
+    "seed:prod": "tsx scripts/seed.ts",
+    "rules:deploy": "firebase deploy --only firestore:rules,firestore:indexes"
   },
   "dependencies": {
     "clsx": "^2.1.1",
+    "firebase": "^12.17.1",
     "next": "16.3.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -22,7 +27,10 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.1",
+    "firebase-admin": "^14.2.0",
+    "firebase-tools": "^15.27.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.12",
     "typescript": "^5"
   }
 }
