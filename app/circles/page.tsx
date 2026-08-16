@@ -89,8 +89,39 @@ export default async function CirclesPage() {
         </Container>
       </Section>
 
+      {/* Open circles — right under "Start a circle", since it's the other
+          half of the same decision: start one, or take a seat in one that
+          already exists. */}
+      <Section id={copy.openCircles.id} className="scroll-mt-24">
+        <Container>
+          <SectionHeading
+            eyebrow={copy.openCircles.eyebrow}
+            title={copy.openCircles.title}
+            body={copy.openCircles.body}
+          />
+
+          {list.length > 0 ? (
+            <ul
+              aria-label={copy.openCircles.listLabel}
+              className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {list.map((circle) => (
+                <li key={circle.id}>
+                  <CircleCard circle={circle} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="mt-10 rounded-[var(--radius-card)] border border-dashed border-ink/20 p-12 text-center">
+              <h3 className="display text-3xl">{copy.openCircles.emptyTitle}</h3>
+              <p className="mt-3 text-ink-soft">{copy.openCircles.emptyBody}</p>
+            </div>
+          )}
+        </Container>
+      </Section>
+
       {/* Pricing table */}
-      <Section>
+      <Section className="bg-paper">
         <Container>
           <SectionHeading
             eyebrow={copy.pricing.eyebrow}
@@ -147,7 +178,7 @@ export default async function CirclesPage() {
       </Section>
 
       {/* Three ways */}
-      <Section className="bg-paper">
+      <Section>
         <Container>
           <SectionHeading title={copy.steps.title} />
           <ul className="mt-10 grid gap-4 md:grid-cols-3">
@@ -166,35 +197,6 @@ export default async function CirclesPage() {
               </li>
             ))}
           </ul>
-        </Container>
-      </Section>
-
-      {/* Open circles */}
-      <Section id={copy.openCircles.id} className="scroll-mt-24">
-        <Container>
-          <SectionHeading
-            eyebrow={copy.openCircles.eyebrow}
-            title={copy.openCircles.title}
-            body={copy.openCircles.body}
-          />
-
-          {list.length > 0 ? (
-            <ul
-              aria-label={copy.openCircles.listLabel}
-              className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-            >
-              {list.map((circle) => (
-                <li key={circle.id}>
-                  <CircleCard circle={circle} />
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="mt-10 rounded-[var(--radius-card)] border border-dashed border-ink/20 p-12 text-center">
-              <h3 className="display text-3xl">{copy.openCircles.emptyTitle}</h3>
-              <p className="mt-3 text-ink-soft">{copy.openCircles.emptyBody}</p>
-            </div>
-          )}
         </Container>
       </Section>
 

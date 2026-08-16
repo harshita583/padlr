@@ -85,7 +85,7 @@ export const threads: Thread[] = [
           time: "08:00",
           durationMinutes: 120,
           people: 1,
-          total: 143,
+          total: 128,
           status: "confirmed",
         },
       },

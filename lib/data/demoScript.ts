@@ -199,7 +199,7 @@ export const demoScripts: Record<string, ScriptedReply[]> = {
       messages: [
         {
           kind: "text",
-          body: "Please do. Two is easier than one honestly — you can watch each other's hands. It's $59 for the pair rather than $45 each.",
+          body: "Please do. Two is easier than one honestly — you can watch each other's hands. It's $34 for the pair rather than $27 each.",
         },
       ],
     },
