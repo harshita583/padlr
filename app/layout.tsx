@@ -3,6 +3,7 @@ import { Anton, Instrument_Serif, Inter } from "next/font/google";
 import { brand, common } from "@/content";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const inter = Inter({
@@ -56,6 +57,7 @@ export default function RootLayout({
           {children}
         </main>
         <SiteFooter />
+        <Analytics />
       </body>
     </html>
   );
