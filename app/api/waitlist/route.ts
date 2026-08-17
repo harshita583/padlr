@@ -1,4 +1,5 @@
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const NOTION_VERSION = "2022-06-28";
 
 /**
  * Adds an email to a Notion database.
@@ -7,9 +8,13 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  *   NOTION_API_KEY              — an internal integration secret
  *   NOTION_WAITLIST_DATABASE_ID — the database to write into
  *
- * The database needs exactly one property this route depends on: a title
- * column named "Email". Add anything else you like on top (a "Created time"
- * column is the easy way to get a timestamp — Notion fills that in itself).
+ * The only real requirement is Notion's own: every database has exactly one
+ * title property, whatever it's called ("Name" by default) — this reads the
+ * schema each time and writes the email into that one, so renaming it in
+ * Notion doesn't break anything here. If the database also has a property of
+ * type "email" (any name), that gets filled in too, as a real Notion email
+ * field rather than plain text. Neither is hard-coded, because asking
+ * somebody to rename a column to match a route handler is backwards.
  */
 export async function POST(request: Request) {
   let email: unknown;
@@ -36,17 +41,39 @@ export async function POST(request: Request) {
     return Response.json({ error: "Waitlist isn't configured yet." }, { status: 500 });
   }
 
+  const notionHeaders = {
+    Authorization: `Bearer ${apiKey}`,
+    "Notion-Version": NOTION_VERSION,
+    "Content-Type": "application/json",
+  };
+
+  const schemaRes = await fetch(`https://api.notion.com/v1/databases/${databaseId}`, {
+    headers: notionHeaders,
+  });
+
+  if (!schemaRes.ok) {
+    console.error("Waitlist: couldn't read the database schema.", schemaRes.status, await schemaRes.text());
+    return Response.json({ error: "Something went wrong. Try again shortly." }, { status: 502 });
+  }
+
+  const schema = await schemaRes.json();
+  const properties: Record<string, { type: string }> = schema.properties ?? {};
+  const titleProp = Object.entries(properties).find(([, p]) => p.type === "title")?.[0];
+  const emailProp = Object.entries(properties).find(([, p]) => p.type === "email")?.[0];
+
+  if (!titleProp) {
+    console.error("Waitlist: the database has no title property — Notion requires one.");
+    return Response.json({ error: "Something went wrong. Try again shortly." }, { status: 502 });
+  }
+
   const notionRes = await fetch("https://api.notion.com/v1/pages", {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Notion-Version": "2022-06-28",
-      "Content-Type": "application/json",
-    },
+    headers: notionHeaders,
     body: JSON.stringify({
       parent: { database_id: databaseId },
       properties: {
-        Email: { title: [{ text: { content: email } }] },
+        [titleProp]: { title: [{ text: { content: email } }] },
+        ...(emailProp ? { [emailProp]: { email } } : {}),
       },
     }),
   });
