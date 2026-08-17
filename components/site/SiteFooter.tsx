@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { brand, footer } from "@/content";
+import { brand, footer, waitlist } from "@/content";
 import { Container } from "@/components/ui/Primitives";
 import { PaddleMark } from "@/components/site/Logo";
+import { WaitlistForm } from "@/components/waitlist/WaitlistForm";
 
 /**
  * Warm clay rather than the near-black olive it used to be: the whole site is
@@ -13,7 +14,22 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-ink/10 bg-clay text-ink">
       <Container className="py-16 sm:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.4fr_2fr]">
+        {/* Waitlist — its own strip above everything else, so it reads as an
+            invitation rather than one more link in a column. */}
+        <div className="flex flex-col gap-6 border-b border-ink/12 pb-10 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
+          <div className="max-w-md">
+            <p className="text-[0.6875rem] font-bold tracking-[0.18em] text-ink-soft uppercase">
+              {waitlist.eyebrow}
+            </p>
+            <h2 className="display mt-2 text-3xl">{waitlist.title}</h2>
+            <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-soft">
+              {waitlist.body}
+            </p>
+          </div>
+          <WaitlistForm className="lg:shrink-0" />
+        </div>
+
+        <div className="mt-10 grid gap-12 lg:grid-cols-[1.4fr_2fr]">
           <div>
             <div className="flex items-center gap-2.5">
               <span className="grid size-9 place-items-center rounded-xl bg-forest text-white">

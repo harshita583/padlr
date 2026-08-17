@@ -24,6 +24,7 @@ import { circles } from "./circles";
 import { teach } from "./teach";
 import { join } from "./join";
 import { profile } from "./profile";
+import { waitlist } from "./waitlist";
 
 export const copy = {
   brand,
@@ -39,6 +40,7 @@ export const copy = {
   teach,
   join,
   profile,
+  waitlist,
 } as const;
 
 export type Copy = typeof copy;
@@ -57,4 +59,5 @@ export {
   teach,
   join,
   profile,
+  waitlist,
 };
