@@ -6,11 +6,14 @@ import { messages as copy } from "@/content";
 import { CIRCLES_EVENT, circleInitials, readCircles } from "@/lib/circlesStore";
 import { CONTACTS_EVENT, readContacts } from "@/lib/contactsStore";
 import { EARNINGS_EVENT, groupByThread, readEarnings } from "@/lib/earningsStore";
+import { PROFILE_EVENT, readProfile } from "@/lib/profile";
 import { TEACHER_EVENT, readTeacher } from "@/lib/teacherStore";
+import { VIEW_MODE_EVENT, resolveViewMode } from "@/lib/viewMode";
 import { formatPrice, formatRelativeDay, formatTime } from "@/lib/date";
 import { ThreadList, type ThreadSummary } from "./ThreadList";
 import { TeacherThreadFeed } from "./TeacherThreadFeed";
 import { Container } from "@/components/ui/Primitives";
+import { RoleSwitch } from "@/components/site/RoleSwitch";
 import { cn, initialsFromLabel } from "@/lib/utils";
 
 /**
@@ -90,17 +93,33 @@ export function MessagesShell({
     return () => window.removeEventListener(CONTACTS_EVENT, read);
   }, []);
 
-  // Whether this browser teaches. Starts false so the server-rendered learner
-  // markup never has to change shape on mount — only after we positively know
-  // there's a teaching profile does the view flip.
-  const [isTeacher, setIsTeacher] = useState(false);
+  // Which hat this browser is wearing. Starts as learner-mode's shape so the
+  // server-rendered markup never has to change on mount — only after we know
+  // what's actually in storage does the view (possibly) flip.
+  const [hasTeacher, setHasTeacher] = useState(false);
+  const [hasLearner, setHasLearner] = useState(false);
+  const [mode, setMode] = useState<"teacher" | "learner">("learner");
 
   useEffect(() => {
-    const read = () => setIsTeacher(readTeacher() !== null);
+    const read = () => {
+      const teacher = readTeacher() !== null;
+      const learner = readProfile() !== null;
+      setHasTeacher(teacher);
+      setHasLearner(learner);
+      setMode(resolveViewMode({ hasTeacher: teacher, hasLearner: learner }));
+    };
     read();
     window.addEventListener(TEACHER_EVENT, read);
-    return () => window.removeEventListener(TEACHER_EVENT, read);
+    window.addEventListener(PROFILE_EVENT, read);
+    window.addEventListener(VIEW_MODE_EVENT, read);
+    return () => {
+      window.removeEventListener(TEACHER_EVENT, read);
+      window.removeEventListener(PROFILE_EVENT, read);
+      window.removeEventListener(VIEW_MODE_EVENT, read);
+    };
   }, []);
+
+  const isTeacher = mode === "teacher";
 
   // The teacher's own activity, grouped into threads. Only read once we know
   // this is a teacher — no point tracking it otherwise.
@@ -142,8 +161,9 @@ export function MessagesShell({
               inThread && "hidden lg:flex",
             )}
           >
-            <div className="border-b border-ink/8 px-4 py-4">
+            <div className="flex items-center justify-between gap-3 border-b border-ink/8 px-4 py-4">
               <h1 className="display text-2xl">{copy.teacherView.title}</h1>
+              {hasTeacher && hasLearner ? <RoleSwitch mode={mode} /> : null}
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto">
               {teacherThreadSummaries.length > 0 ? (
@@ -188,8 +208,9 @@ export function MessagesShell({
             inThread && "hidden lg:flex",
           )}
         >
-          <div className="border-b border-ink/8 px-4 py-4">
+          <div className="flex items-center justify-between gap-3 border-b border-ink/8 px-4 py-4">
             <h1 className="display text-2xl">{copy.inbox.title}</h1>
+            {hasTeacher && hasLearner ? <RoleSwitch mode={mode} /> : null}
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto">
             <ThreadList

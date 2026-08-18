@@ -18,10 +18,13 @@ import {
   teacherName,
   type TeacherProfile,
 } from "@/lib/teacherStore";
+import { VIEW_MODE_EVENT, resolveViewMode } from "@/lib/viewMode";
+import { RoleSwitch } from "./RoleSwitch";
 
 /**
- * The right-hand slot in the header: a sign-up button, or the learner's face
- * once they have a profile.
+ * The right-hand slot in the header: a sign-up button, or a face once there's
+ * a profile — the teacher's, the learner's, or (rare) whichever the role
+ * switch is currently set to, when both exist.
  *
  * The profile lives in localStorage, which the server can't see — so the
  * button is what renders on the server and on the first client paint, and the
@@ -40,32 +43,20 @@ export function HeaderAccount() {
       setTeacher(readTeacher());
     };
     read();
-    // The two *_EVENTs cover this tab; "storage" covers the others.
+    // The *_EVENTs cover this tab; "storage" covers the others.
     window.addEventListener(PROFILE_EVENT, read);
     window.addEventListener(TEACHER_EVENT, read);
+    window.addEventListener(VIEW_MODE_EVENT, read);
     window.addEventListener("storage", read);
     return () => {
       window.removeEventListener(PROFILE_EVENT, read);
       window.removeEventListener(TEACHER_EVENT, read);
+      window.removeEventListener(VIEW_MODE_EVENT, read);
       window.removeEventListener("storage", read);
     };
   }, []);
 
-  // Signing up to teach is signing up. Showing somebody "Get started" straight
-  // after they published a teaching profile calls them a stranger.
-  if (mounted && !profile && teacher) {
-    return (
-      <Link
-        href={nav.profile.href}
-        aria-label={nav.profile.labelFor(teacherName(teacher))}
-        className="grid size-10 place-items-center rounded-full bg-sage text-[0.8125rem] font-bold text-olive transition-transform duration-200 hover:scale-105"
-      >
-        <span aria-hidden="true">{teacherInitials(teacher)}</span>
-      </Link>
-    );
-  }
-
-  if (!mounted || !profile) {
+  if (!mounted || (!profile && !teacher)) {
     return (
       <ButtonLink href={nav.cta.href} size="sm" className="hidden sm:inline-flex">
         {nav.cta.label}
@@ -73,13 +64,22 @@ export function HeaderAccount() {
     );
   }
 
+  const mode = resolveViewMode({ hasTeacher: !!teacher, hasLearner: !!profile });
+  const showingTeacher = mode === "teacher" && !!teacher;
+
+  const name = showingTeacher ? teacherName(teacher) : displayName(profile!);
+  const initials = showingTeacher ? teacherInitials(teacher) : initialsOf(profile!);
+
   return (
-    <Link
-      href={nav.profile.href}
-      aria-label={nav.profile.labelFor(displayName(profile))}
-      className="grid size-10 place-items-center rounded-full bg-sage text-[0.8125rem] font-bold text-olive transition-transform duration-200 hover:scale-105"
-    >
-      <span aria-hidden="true">{initialsOf(profile)}</span>
-    </Link>
+    <div className="flex items-center gap-2.5">
+      {profile && teacher ? <RoleSwitch mode={mode} className="hidden sm:inline-flex" /> : null}
+      <Link
+        href={nav.profile.href}
+        aria-label={nav.profile.labelFor(name)}
+        className="grid size-10 shrink-0 place-items-center rounded-full bg-sage text-[0.8125rem] font-bold text-olive transition-transform duration-200 hover:scale-105"
+      >
+        <span aria-hidden="true">{initials}</span>
+      </Link>
+    </div>
   );
 }

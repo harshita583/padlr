@@ -33,6 +33,12 @@ export const nav = {
     href: "/profile",
     labelFor: (name: string) => `Your profile — ${name}`,
   },
+  /** Only shown to the rare person who's both signed up to teach and to learn. */
+  roleSwitch: {
+    label: "Switch between teaching and learning",
+    teaching: "Teaching",
+    learning: "Learning",
+  },
   /** Accessible name for the mobile menu toggle. */
   menuOpenLabel: "Open main menu",
   menuCloseLabel: "Close main menu",
