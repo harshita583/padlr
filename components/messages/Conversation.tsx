@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 import { newlyEarned } from "@/lib/badges";
 import { emptyStats, readProfile, recordLesson } from "@/lib/profile";
 import { decideCircle } from "@/lib/circlesStore";
+import { recordAffiliateEarning, recordLessonEarning } from "@/lib/earningsStore";
+import { AFFILIATE_COMMISSION_RATE, parseGearPrice, teacherTakeHome } from "@/lib/pricing";
 import { BadgeAward } from "./BadgeAward";
 import { CircleRequestMessage } from "./CircleRequestMessage";
 
@@ -40,6 +42,15 @@ export interface ChatMessage {
     /** Kept as a number as well as a label, because badges count on it. */
     people: number;
     status: "pending" | "confirmed" | "declined";
+    /**
+     * Set only for bookings made live through this dialog, not seeded ones —
+     * the teacher earnings dashboard only counts activity that actually
+     * happened in this browser. `lessonDate` is the ISO date of the lesson
+     * itself, for sorting a schedule; `gross` is pre-fee, what the platform
+     * cut is a percentage of.
+     */
+    lessonDate?: string;
+    gross?: number;
   };
 }
 
@@ -133,6 +144,8 @@ export function Conversation({
         totalLabel: formatPrice(request.total),
         people: request.people,
         status: "pending",
+        lessonDate: day?.date,
+        gross: request.grossAmount,
       },
     });
     setBookingOpen(false);
@@ -162,6 +175,22 @@ export function Conversation({
         for (const def of newlyEarned(before, updated.stats)) {
           append({ kind: "system", mine: false, badgeId: def.id });
         }
+      }
+
+      // The other side of the same event: this is also revenue for whoever
+      // is teaching. `gross` and `lessonDate` are only set on bookings made
+      // live in this dialog, not seeded ones — see the earnings store for why.
+      if (booked.gross !== undefined) {
+        recordLessonEarning({
+          gross: booked.gross,
+          fee: booked.gross - teacherTakeHome(booked.gross),
+          payout: teacherTakeHome(booked.gross),
+          skill: partner.skill,
+          people: booked.people,
+          lessonDate: booked.lessonDate ?? "",
+          dateLabel: booked.dateLabel,
+          timeLabel: booked.timeLabel,
+        });
       }
     }
     void (async () => {
@@ -242,6 +271,18 @@ export function Conversation({
         if (gear) {
           append({ kind: "product", mine: false, body: scripted.body, gear });
           setOpenSignal((n) => n + 1);
+
+          // Only links that actually carry a commission earn anything —
+          // g6 (tyre levers), for instance, doesn't.
+          if (gear.affiliate) {
+            recordAffiliateEarning({
+              estimatedPayout: Math.round(
+                parseGearPrice(gear.price) * AFFILIATE_COMMISSION_RATE,
+              ),
+              itemName: gear.name,
+              skill: partner.skill,
+            });
+          }
         }
       } else {
         append({ kind: "text", mine: false, body: scripted.body });

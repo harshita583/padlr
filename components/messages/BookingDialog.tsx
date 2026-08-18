@@ -18,6 +18,8 @@ export interface BookingRequest {
   durationMinutes: number;
   people: number;
   total: number;
+  /** The lesson price before Padlr's learner-side fee — what the teacher's cut is a percentage of. */
+  grossAmount: number;
 }
 
 /**
@@ -90,6 +92,7 @@ export function BookingDialog({
       durationMinutes: Number(duration),
       people: Number(people),
       total: quote.total,
+      grossAmount: quote.lesson + quote.extra,
     });
   }
 

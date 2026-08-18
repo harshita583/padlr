@@ -220,6 +220,7 @@ export const teach = {
         class: "Bigger classes",
       },
       messagesCta: { label: "Enquiries", href: "/messages" },
+      dashboardCta: { label: "Earnings & schedule", href: "/teach/dashboard" },
       editCta: { label: "Change your details", href: "/teach/apply" },
     },
     /** Shown at the top of the form if a profile already exists. */
@@ -228,6 +229,43 @@ export const teach = {
       body: "Filling this in again replaces what's there.",
       action: "Delete my teacher profile",
     },
+  },
+
+  /** /teach/dashboard — earnings, Padlr's cut, affiliate income, and the schedule. */
+  dashboard: {
+    meta: {
+      title: "Earnings & schedule",
+      description: "What you've made teaching, what Padlr took, and what's coming up.",
+    },
+    eyebrow: "Your teaching",
+    title: "Earnings & schedule",
+    body: "Fills in as lessons get confirmed and links get shared in Messages — nothing here is backdated or estimated from your rate.",
+    stats: {
+      payout: "You've earned",
+      fee: "Padlr's cut",
+      affiliate: "Affiliate income",
+      lessons: "Lessons confirmed",
+    },
+    /** The honesty note under the affiliate figure — it's a projection, not a receipt. */
+    affiliateNote:
+      "Estimated: assumes a learner buys once you share a link. There's no way to confirm an actual purchase in this demo.",
+    schedule: {
+      title: "Your schedule",
+      upcomingLabel: "Upcoming",
+      pastLabel: "Already happened",
+      peopleFor: (n: number) => (n === 1 ? "Just them" : `${n} people`),
+      payoutLabel: "You keep",
+      emptyTitle: "Nothing confirmed yet",
+      emptyBody:
+        "When you approve a lesson request in a conversation, it lands here with what you'll be paid.",
+    },
+    /** Shown if you land here without a teaching profile yet. */
+    notYet: {
+      title: "You're not set up to teach yet",
+      body: "Earnings and your schedule show up here once you've published a teaching profile.",
+      cta: { label: "Set up your profile", href: "/teach/apply" },
+    },
+    backCta: { label: "Back to your profile", href: "/profile" },
   },
 
   faq: {

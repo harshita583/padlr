@@ -17,6 +17,24 @@ export function teacherTakeHome(rate: number): number {
   return Math.round(rate * (1 - PLATFORM_FEE_RATE));
 }
 
+/** Padlr's cut of a given amount — the mirror of `teacherTakeHome`. */
+export function platformFeeOn(amount: number): number {
+  return amount - teacherTakeHome(amount);
+}
+
+/**
+ * Assumed conversion rate for a shared shopping link, since nothing in this
+ * demo can actually know whether a learner went on to buy the thing. Any
+ * figure built from this is an estimate and should say so on screen — it's
+ * for showing what the feature would look like, not a real ledger.
+ */
+export const AFFILIATE_COMMISSION_RATE = 0.1;
+
+/** "$14" → 14. Gear prices are authored as display strings, not numbers. */
+export function parseGearPrice(price: string): number {
+  return Number(price.replace(/[^0-9.]/g, "")) || 0;
+}
+
 export interface Quote {
   /** The teacher's base rate for the booked time. */
   lesson: number;
