@@ -3,7 +3,6 @@ import { home } from "@/content";
 import { getCategories, getEvents, getExpertById, getExperts } from "@/lib/data";
 import type { Expert } from "@/lib/types";
 import { Hero } from "@/components/home/Hero";
-import { WaitlistBanner } from "@/components/home/WaitlistBanner";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
 import { EventsRail } from "@/components/home/EventsRail";
 import { ProofCollage } from "@/components/home/ProofCollage";
@@ -32,7 +31,6 @@ export default async function HomePage() {
   return (
     <>
       <Hero sample={experts[0]} />
-      <WaitlistBanner />
       <CategoryGrid categories={categories} />
       <EventsRail events={events} hosts={hosts} />
       <ProofCollage />

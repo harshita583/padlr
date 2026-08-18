@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { brand, common } from "@/content";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { WaitlistPopup } from "@/components/waitlist/WaitlistPopup";
 import "./globals.css";
 
 const inter = Inter({
@@ -57,6 +58,7 @@ export default function RootLayout({
           {children}
         </main>
         <SiteFooter />
+        <WaitlistPopup />
         {/* Only actually reports visits on Vercel — silently does nothing in
             local dev or any other host, so it's safe to leave in always. */}
         <Analytics />

@@ -11,8 +11,12 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 type Status = "idle" | "submitting" | "success" | "error";
 
 /**
- * The email box in the footer. Posts to /api/waitlist, which forwards the
+ * The email box on the homepage. Posts to /api/waitlist, which forwards the
  * address to Notion — see that route for what it needs to be configured.
+ *
+ * Stacked rather than side-by-side: it lives inside a narrow inset card, and
+ * a fixed sm:flex-row would size against the viewport, not the card, and
+ * squeeze the button the moment the card is narrower than its breakpoint.
  */
 export function WaitlistForm({ className }: { className?: string }) {
   const id = useId();
@@ -50,7 +54,7 @@ export function WaitlistForm({ className }: { className?: string }) {
 
   if (status === "success") {
     return (
-      <p role="status" className={cn("text-[0.9375rem] font-bold text-forest", className)}>
+      <p role="status" className={cn("text-[0.9375rem] leading-relaxed font-bold text-forest", className)}>
         <span aria-hidden="true">✓ </span>
         {copy.success}
       </p>
@@ -58,35 +62,32 @@ export function WaitlistForm({ className }: { className?: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className={className}>
-      <div className="flex flex-col gap-2.5 sm:flex-row">
-        <label htmlFor={`${id}-email`} className="sr-only">
-          {copy.emailLabel}
-        </label>
-        <Input
-          id={`${id}-email`}
-          type="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            if (error) setError(null);
-          }}
-          placeholder={copy.placeholder}
-          autoComplete="email"
-          aria-describedby={error ? `${id}-error` : `${id}-note`}
-          aria-invalid={error ? true : undefined}
-          className="sm:max-w-[16rem]"
-        />
-        <Button type="submit" disabled={status === "submitting"} className="shrink-0">
-          {status === "submitting" ? copy.submitting : copy.submit}
-        </Button>
-      </div>
+    <form onSubmit={handleSubmit} noValidate className={cn("flex flex-col gap-3", className)}>
+      <label htmlFor={`${id}-email`} className="sr-only">
+        {copy.emailLabel}
+      </label>
+      <Input
+        id={`${id}-email`}
+        type="email"
+        value={email}
+        onChange={(e) => {
+          setEmail(e.target.value);
+          if (error) setError(null);
+        }}
+        placeholder={copy.placeholder}
+        autoComplete="email"
+        aria-describedby={error ? `${id}-error` : `${id}-note`}
+        aria-invalid={error ? true : undefined}
+      />
+      <Button type="submit" size="lg" disabled={status === "submitting"} className="w-full">
+        {status === "submitting" ? copy.submitting : copy.submit}
+      </Button>
       {error ? (
-        <p id={`${id}-error`} role="alert" className="mt-2 text-sm font-medium text-coral">
+        <p id={`${id}-error`} role="alert" className="text-sm font-medium text-coral">
           {error}
         </p>
       ) : (
-        <p id={`${id}-note`} className="mt-2 text-xs text-ink-faint">
+        <p id={`${id}-note`} className="text-xs text-ink-faint">
           {copy.privacyNote}
         </p>
       )}

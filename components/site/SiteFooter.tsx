@@ -2,6 +2,7 @@ import Link from "next/link";
 import { brand, footer } from "@/content";
 import { Container } from "@/components/ui/Primitives";
 import { PaddleMark } from "@/components/site/Logo";
+import { WaitlistReopenLink } from "@/components/waitlist/WaitlistReopenLink";
 
 /**
  * Warm clay rather than the near-black olive it used to be: the whole site is
@@ -30,6 +31,7 @@ export function SiteFooter() {
             >
               {brand.email}
             </a>
+            <WaitlistReopenLink className="mt-3 block text-[0.9375rem] font-semibold text-forest underline decoration-forest/30 decoration-2 underline-offset-4 hover:decoration-forest" />
           </div>
 
           <div className="grid gap-10 sm:grid-cols-3">
