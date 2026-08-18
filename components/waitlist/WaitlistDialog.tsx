@@ -32,25 +32,25 @@ export function WaitlistDialog({ open, onClose }: { open: boolean; onClose: () =
       }}
     >
       <div className="overflow-hidden rounded-[var(--radius-card)] bg-paper text-left shadow-[var(--shadow-lift)]">
-        <div className="relative overflow-hidden bg-coral px-6 pt-6 pb-8 sm:px-8 sm:pt-8">
-          <Motif variant="waves" className="text-ink" opacity={0.14} />
+        <div className="relative overflow-hidden bg-forest px-6 pt-6 pb-9 text-paper sm:px-8 sm:pt-8">
+          <Motif variant="waves" opacity={0.18} />
 
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 grid size-9 place-items-center rounded-full bg-paper/70 text-sm transition-colors hover:bg-paper"
+            className="absolute top-4 right-4 grid size-9 place-items-center rounded-full bg-paper/15 text-sm text-paper transition-colors hover:bg-paper/25"
           >
             <span aria-hidden="true">✕</span>
             <span className="sr-only">{copy.closeLabel}</span>
           </button>
 
-          <p className="relative text-[0.6875rem] font-bold tracking-[0.18em] text-ink/60 uppercase">
+          <p className="relative text-[0.6875rem] font-bold tracking-[0.18em] text-lemon uppercase">
             {copy.eyebrow}
           </p>
-          <h2 id={`${id}-title`} className="display relative mt-2 text-3xl text-ink">
+          <h2 id={`${id}-title`} className="display relative mt-2 text-4xl text-paper">
             {copy.title}
           </h2>
-          <p className="relative mt-2 max-w-[26rem] text-[0.9375rem] leading-relaxed text-ink/75">
+          <p className="relative mt-2.5 max-w-[26rem] text-[0.9375rem] leading-relaxed text-paper/80">
             {copy.body}
           </p>
         </div>
