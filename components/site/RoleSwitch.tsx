@@ -7,32 +7,50 @@ import { cn } from "@/lib/utils";
 const copy = nav.roleSwitch;
 
 /**
- * Teaching / Learning, as a pill toggle. Only ever rendered when both
- * profiles exist — with just one, there's nothing to switch between, so a
- * disabled or single-option switch would just be clutter.
+ * Teaching / Learning, as one sliding switch — a single click flips it,
+ * Fiverr-style, rather than two separate buttons to choose between. Only
+ * ever rendered when both profiles exist; with just one, there's nothing to
+ * switch to, so a toggle would just be clutter.
  */
 export function RoleSwitch({ mode, className }: { mode: ViewMode; className?: string }) {
+  const isTeacher = mode === "teacher";
+
   return (
-    <div
-      role="radiogroup"
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isTeacher}
       aria-label={copy.label}
-      className={cn("inline-flex rounded-full bg-ink/6 p-1 text-sm font-semibold", className)}
+      onClick={() => setViewMode(isTeacher ? "learner" : "teacher")}
+      className={cn(
+        "relative inline-flex shrink-0 rounded-full bg-ink/8 p-1 transition-colors hover:bg-ink/12",
+        className,
+      )}
     >
-      {(["teacher", "learner"] as const).map((option) => (
-        <button
-          key={option}
-          type="button"
-          role="radio"
-          aria-checked={mode === option}
-          onClick={() => setViewMode(option)}
-          className={cn(
-            "rounded-full px-3 py-1.5 transition-colors",
-            mode === option ? "bg-forest text-paper" : "text-ink-soft hover:text-ink",
-          )}
-        >
-          {option === "teacher" ? copy.teaching : copy.learning}
-        </button>
-      ))}
-    </div>
+      {/* The one moving part — slides under whichever label is active. */}
+      <span
+        aria-hidden="true"
+        className={cn(
+          "absolute inset-y-1 left-1 w-24 rounded-full bg-forest shadow-sm transition-transform duration-200 ease-[var(--ease-out-soft)]",
+          !isTeacher && "translate-x-24",
+        )}
+      />
+      <span
+        className={cn(
+          "relative z-10 w-24 py-1.5 text-center text-sm font-bold transition-colors",
+          isTeacher ? "text-paper" : "text-ink-soft",
+        )}
+      >
+        {copy.teaching}
+      </span>
+      <span
+        className={cn(
+          "relative z-10 w-24 py-1.5 text-center text-sm font-bold transition-colors",
+          !isTeacher ? "text-paper" : "text-ink-soft",
+        )}
+      >
+        {copy.learning}
+      </span>
+    </button>
   );
 }
