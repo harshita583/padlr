@@ -201,4 +201,30 @@ export const messages = {
         ? `I'm learning ${skill} ${when} with a teacher near me, booked on Padlr.`
         : `I'm learning ${skill} with a teacher near me, booked on Padlr.`,
   },
+
+  /**
+   * Messages, from the teacher's side.
+   *
+   * When you have a teaching profile, this *is* your inbox — not a second one
+   * bolted on elsewhere. Your confirmed lessons and shared links render as
+   * cards on the right, the side "mine" sits on, talking to the learner shown
+   * on the left. It's an activity feed, not a full transcript: small talk
+   * isn't kept anywhere durable in this demo, so only the things that
+   * actually left a record — a confirmed lesson, a shared link — show up.
+   */
+  teacherView: {
+    title: "Messages",
+    listLabel: "Conversations with activity",
+    genericLearner: "A learner",
+    totalFor: (amount: string) => `${amount} so far`,
+    emptyTitle: "No activity yet",
+    emptyBody:
+      "Nothing shows up here until a lesson gets confirmed or a link gets shared in one of your conversations.",
+    feedNote:
+      "Only what actually happened — confirmed lessons and shared links. The rest of the conversation isn't kept anywhere in this demo.",
+    lessonTitle: "Lesson confirmed",
+    lessonNote: (payout: string) => `You keep ${payout}`,
+    affiliateTitle: "You shared a link",
+    affiliateNote: (payout: string) => `Estimated commission: ${payout}`,
+  },
 } as const;

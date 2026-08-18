@@ -5,10 +5,13 @@ import { useEffect, useState, type ReactNode } from "react";
 import { messages as copy } from "@/content";
 import { CIRCLES_EVENT, circleInitials, readCircles } from "@/lib/circlesStore";
 import { CONTACTS_EVENT, readContacts } from "@/lib/contactsStore";
-import { formatRelativeDay, formatTime } from "@/lib/date";
+import { EARNINGS_EVENT, groupByThread, readEarnings } from "@/lib/earningsStore";
+import { TEACHER_EVENT, readTeacher } from "@/lib/teacherStore";
+import { formatPrice, formatRelativeDay, formatTime } from "@/lib/date";
 import { ThreadList, type ThreadSummary } from "./ThreadList";
+import { TeacherThreadFeed } from "./TeacherThreadFeed";
 import { Container } from "@/components/ui/Primitives";
-import { cn } from "@/lib/utils";
+import { cn, initialsFromLabel } from "@/lib/utils";
 
 /**
  * Two-pane inbox. On small screens only one pane is shown at a time — the list
@@ -86,6 +89,92 @@ export function MessagesShell({
     window.addEventListener(CONTACTS_EVENT, read);
     return () => window.removeEventListener(CONTACTS_EVENT, read);
   }, []);
+
+  // Whether this browser teaches. Starts false so the server-rendered learner
+  // markup never has to change shape on mount — only after we positively know
+  // there's a teaching profile does the view flip.
+  const [isTeacher, setIsTeacher] = useState(false);
+
+  useEffect(() => {
+    const read = () => setIsTeacher(readTeacher() !== null);
+    read();
+    window.addEventListener(TEACHER_EVENT, read);
+    return () => window.removeEventListener(TEACHER_EVENT, read);
+  }, []);
+
+  // The teacher's own activity, grouped into threads. Only read once we know
+  // this is a teacher — no point tracking it otherwise.
+  const [teacherThreads, setTeacherThreads] = useState<
+    ReturnType<typeof groupByThread>
+  >([]);
+
+  useEffect(() => {
+    if (!isTeacher) return;
+    const read = () => setTeacherThreads(groupByThread(readEarnings()));
+    read();
+    window.addEventListener(EARNINGS_EVENT, read);
+    return () => window.removeEventListener(EARNINGS_EVENT, read);
+  }, [isTeacher]);
+
+  if (isTeacher) {
+    const teacherThreadSummaries: ThreadSummary[] = teacherThreads.map((t) => {
+      const relative = formatRelativeDay(t.lastActivityAt);
+      return {
+        id: t.threadHref.replace(/^\/messages\//, ""),
+        name: t.learnerLabel,
+        initials: initialsFromLabel(t.learnerLabel),
+        tone: t.tone,
+        skill: t.skill,
+        preview: copy.teacherView.totalFor(formatPrice(t.totalPayout)),
+        time: relative === "Today" ? formatTime(t.lastActivityAt) : relative,
+        unread: 0,
+      };
+    });
+    // Same "open the newest one" rule the learner side uses for /messages.
+    const activeTeacherHref = inThread ? pathname : teacherThreads[0]?.threadHref;
+
+    return (
+      <Container className="py-6 sm:py-10">
+        <div className="grid h-[calc(100dvh-7.5rem)] min-h-[32rem] overflow-hidden rounded-[var(--radius-card)] border border-ink/8 bg-paper sm:h-[calc(100dvh-9.5rem)] lg:grid-cols-[21rem_1fr]">
+          <div
+            className={cn(
+              "flex min-h-0 min-w-0 flex-col border-ink/8 lg:border-r",
+              inThread && "hidden lg:flex",
+            )}
+          >
+            <div className="border-b border-ink/8 px-4 py-4">
+              <h1 className="display text-2xl">{copy.teacherView.title}</h1>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto">
+              {teacherThreadSummaries.length > 0 ? (
+                <ThreadList
+                  threads={teacherThreadSummaries}
+                  activeId={inThread ? undefined : teacherThreadSummaries[0]?.id}
+                />
+              ) : (
+                <div className="p-6 text-center">
+                  <p className="font-semibold">{copy.teacherView.emptyTitle}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+                    {copy.teacherView.emptyBody}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className={cn("flex min-h-0 min-w-0 flex-col", !inThread && "hidden lg:flex")}>
+            {activeTeacherHref ? (
+              <TeacherThreadFeed threadHref={activeTeacherHref} />
+            ) : (
+              <div className="hidden flex-1 items-center justify-center p-10 text-center lg:flex">
+                <p className="text-ink-soft">{copy.teacherView.emptyBody}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <Container className="py-6 sm:py-10">

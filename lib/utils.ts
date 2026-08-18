@@ -46,6 +46,16 @@ export const toneIsDark: Record<Tone, boolean> = {
   cream: false,
 };
 
+/** "Priya N." → "PN". "A learner" → "AL". Any free-text label, not just a Profile. */
+export function initialsFromLabel(label: string): string {
+  return label
+    .split(/\s+/)
+    .map((w) => w[0] ?? "")
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
 function hash(seed: string): number {
   let h = 0;
   for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;

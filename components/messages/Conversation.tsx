@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { BookableDay, GearItem, Tone } from "@/lib/types";
-import { messages as copy, teach } from "@/content";
+import { messages as copy } from "@/content";
 import { fallbackReply, type ScriptedReply } from "@/lib/data/demoScript";
 import { Avatar } from "@/components/ui/Primitives";
 import { Button } from "@/components/ui/Button";
@@ -133,7 +133,7 @@ export function Conversation({
   /** Whoever the teacher inbox should say this thread was with. */
   function currentLearnerLabel(): string {
     const profile = readProfile();
-    return profile ? displayName(profile) : teach.inbox.genericLearner;
+    return profile ? displayName(profile) : copy.teacherView.genericLearner;
   }
 
   /** Turn the overlay's answers into an appointment card in the thread. */

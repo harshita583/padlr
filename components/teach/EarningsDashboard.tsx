@@ -113,8 +113,8 @@ export function EarningsDashboard() {
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <ButtonLink href={copy.apply.panel.inboxCta.href} variant="outline">
-          {copy.apply.panel.inboxCta.label}
+        <ButtonLink href={copy.apply.panel.messagesCta.href} variant="outline">
+          {copy.apply.panel.messagesCta.label}
         </ButtonLink>
         <ButtonLink href={dash.backCta.href} variant="outline">
           {dash.backCta.label}

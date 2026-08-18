@@ -83,9 +83,6 @@ export function TeachingPanel() {
 
       <div className="mt-6 flex flex-wrap gap-3">
         <ButtonLink href={panel.dashboardCta.href}>{panel.dashboardCta.label}</ButtonLink>
-        <ButtonLink href={panel.inboxCta.href} variant="outline">
-          {panel.inboxCta.label}
-        </ButtonLink>
         <ButtonLink href={panel.messagesCta.href} variant="outline">
           {panel.messagesCta.label}
         </ButtonLink>
