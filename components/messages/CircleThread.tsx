@@ -94,6 +94,7 @@ export function CircleThread({ id }: { id: string }) {
       gearItems={gearForCategories([circle.categorySlug])}
       demo={circleReplies}
       days={[]}
+      threadHref={`/messages/${circle.id}`}
     />
   );
 }

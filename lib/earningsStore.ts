@@ -1,5 +1,7 @@
 "use client";
 
+import type { Tone } from "@/lib/types";
+
 /**
  * What the signed-up teacher has earned, kept in localStorage.
  *
@@ -15,8 +17,23 @@
  * append) shape than this ledger.
  */
 
-export interface LessonEarning {
+interface EarningBase {
   id: string;
+  createdAt: string;
+  /** Where this happened — the conversation, from the *learner's* side. */
+  threadHref: string;
+  skill: string;
+  /** Decorative only. The learner in this demo has no fixed identity to colour by. */
+  tone: Tone;
+  /**
+   * Who you were talking to, from the teacher's chair: the signed-in
+   * learner's display name if one exists in this browser, otherwise a
+   * generic label. Never the teacher's own name — that's you.
+   */
+  learnerLabel: string;
+}
+
+export interface LessonEarning extends EarningBase {
   kind: "lesson";
   /** What the teacher actually keeps, after Padlr's platform fee. */
   payout: number;
@@ -24,26 +41,34 @@ export interface LessonEarning {
   gross: number;
   /** Padlr's cut of this lesson. */
   fee: number;
-  skill: string;
   people: number;
   /** ISO date the lesson itself falls on. */
   lessonDate: string;
   dateLabel: string;
   timeLabel: string;
-  createdAt: string;
 }
 
-export interface AffiliateEarning {
-  id: string;
+export interface AffiliateEarning extends EarningBase {
   kind: "affiliate";
   /** Estimated: there's no way here to know a learner actually bought it. */
   estimatedPayout: number;
   itemName: string;
-  skill: string;
-  createdAt: string;
+  /** So the teacher inbox can re-fetch the full item to show a real preview card. */
+  gearId: string;
 }
 
 export type EarningEvent = LessonEarning | AffiliateEarning;
+
+/** One thread's worth of activity, for the teacher inbox list. */
+export interface ThreadActivity {
+  threadHref: string;
+  learnerLabel: string;
+  skill: string;
+  tone: Tone;
+  events: EarningEvent[];
+  totalPayout: number;
+  lastActivityAt: string;
+}
 
 const KEY = "padlr:earnings";
 
@@ -89,4 +114,38 @@ export function recordAffiliateEarning(
     createdAt: new Date().toISOString(),
   };
   writeAll([event, ...readEarnings()]);
+}
+
+/** The payout figure common to both kinds, so a total doesn't need a switch. */
+export function payoutOf(event: EarningEvent): number {
+  return event.kind === "lesson" ? event.payout : event.estimatedPayout;
+}
+
+/**
+ * Groups earnings by conversation, newest thread activity first — this is
+ * the whole data behind the teacher inbox list.
+ */
+export function groupByThread(events: EarningEvent[]): ThreadActivity[] {
+  const byThread = new Map<string, ThreadActivity>();
+
+  for (const event of events) {
+    const existing = byThread.get(event.threadHref);
+    if (existing) {
+      existing.events.push(event);
+      existing.totalPayout += payoutOf(event);
+      if (event.createdAt > existing.lastActivityAt) existing.lastActivityAt = event.createdAt;
+    } else {
+      byThread.set(event.threadHref, {
+        threadHref: event.threadHref,
+        learnerLabel: event.learnerLabel,
+        skill: event.skill,
+        tone: event.tone,
+        events: [event],
+        totalPayout: payoutOf(event),
+        lastActivityAt: event.createdAt,
+      });
+    }
+  }
+
+  return [...byThread.values()].sort((a, b) => b.lastActivityAt.localeCompare(a.lastActivityAt));
 }

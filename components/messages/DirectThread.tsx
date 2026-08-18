@@ -42,6 +42,7 @@ export function DirectThread({
       demo={firstContactReplies}
       days={days}
       onSend={(text) => recordLine(partner.slug, text)}
+      threadHref={`/messages/with/${partner.slug}`}
     />
   );
 }

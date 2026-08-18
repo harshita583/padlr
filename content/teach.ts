@@ -221,6 +221,7 @@ export const teach = {
       },
       messagesCta: { label: "Enquiries", href: "/messages" },
       dashboardCta: { label: "Earnings & schedule", href: "/teach/dashboard" },
+      inboxCta: { label: "Teacher inbox", href: "/teach/inbox" },
       editCta: { label: "Change your details", href: "/teach/apply" },
     },
     /** Shown at the top of the form if a profile already exists. */
@@ -266,6 +267,43 @@ export const teach = {
       cta: { label: "Set up your profile", href: "/teach/apply" },
     },
     backCta: { label: "Back to your profile", href: "/profile" },
+  },
+
+  /**
+   * The teacher inbox: the same activity as the earnings dashboard, but as a
+   * conversation feed rendered from your side of it — your confirmed lessons
+   * and shared links sit on the right, the way they'd look if you were the
+   * one who'd sent them, because in this thread you are.
+   *
+   * It's an activity feed, not a full transcript: small talk isn't kept
+   * anywhere durable in this demo, so only the things that actually left a
+   * record — a confirmed lesson, a shared link — show up here.
+   */
+  inbox: {
+    meta: {
+      title: "Teacher inbox",
+      description: "The lessons and shared links from your side of the conversation.",
+    },
+    eyebrow: "Your teaching",
+    title: "Teacher inbox",
+    body: "Every conversation that's actually turned into a booking or a shared link, seen from your side of it.",
+    listLabel: "Conversations with activity",
+    genericLearner: "A learner",
+    openThread: "Open",
+    totalFor: (amount: string) => `${amount} so far`,
+    emptyTitle: "No activity yet",
+    emptyBody:
+      "Nothing shows up here until a lesson gets confirmed or a link gets shared in one of your conversations.",
+    emptyCta: { label: "Go to Messages", href: "/messages" },
+    thread: {
+      backToInbox: "All conversations",
+      feedNote:
+        "Only what actually happened — confirmed lessons and shared links. The rest of the conversation isn't kept anywhere in this demo.",
+      lessonTitle: "Lesson confirmed",
+      lessonNote: (payout: string) => `You keep ${payout}`,
+      affiliateTitle: "You shared a link",
+      affiliateNote: (payout: string) => `Estimated commission: ${payout}`,
+    },
   },
 
   faq: {

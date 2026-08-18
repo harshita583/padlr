@@ -85,6 +85,7 @@ export async function ThreadView({ id }: { id: string }) {
       gearItems={gearItems}
       demo={demo}
       days={days}
+      threadHref={`/messages/${id}`}
     />
   );
 }

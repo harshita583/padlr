@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { BookableDay, GearItem, Tone } from "@/lib/types";
-import { messages as copy } from "@/content";
+import { messages as copy, teach } from "@/content";
 import { fallbackReply, type ScriptedReply } from "@/lib/data/demoScript";
 import { Avatar } from "@/components/ui/Primitives";
 import { Button } from "@/components/ui/Button";
@@ -14,7 +14,7 @@ import { LinkPreview } from "./LinkPreview";
 import { formatDuration, formatPrice } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { newlyEarned } from "@/lib/badges";
-import { emptyStats, readProfile, recordLesson } from "@/lib/profile";
+import { displayName, emptyStats, readProfile, recordLesson } from "@/lib/profile";
 import { decideCircle } from "@/lib/circlesStore";
 import { recordAffiliateEarning, recordLessonEarning } from "@/lib/earningsStore";
 import { AFFILIATE_COMMISSION_RATE, parseGearPrice, teacherTakeHome } from "@/lib/pricing";
@@ -77,6 +77,7 @@ export function Conversation({
   demo,
   days,
   onSend,
+  threadHref,
 }: {
   partner: ChatPartner;
   initialMessages: ChatMessage[];
@@ -88,6 +89,9 @@ export function Conversation({
   gearItems: GearItem[];
   /** Scripted replies. Empty means the teacher stays quiet. */
   demo: ScriptedReply[];
+  /** This conversation's own URL, from the learner's side — earnings record
+   *  it, so the teacher inbox can link back to where the activity happened. */
+  threadHref: string;
 }) {
   const [items, setItems] = useState(initialMessages);
   const [draft, setDraft] = useState("");
@@ -124,6 +128,12 @@ export function Conversation({
     const id = `local-${localId.current}`;
     setItems((prev) => [...prev, { ...message, id, time: "Just now" }]);
     return id;
+  }
+
+  /** Whoever the teacher inbox should say this thread was with. */
+  function currentLearnerLabel(): string {
+    const profile = readProfile();
+    return profile ? displayName(profile) : teach.inbox.genericLearner;
   }
 
   /** Turn the overlay's answers into an appointment card in the thread. */
@@ -190,6 +200,9 @@ export function Conversation({
           lessonDate: booked.lessonDate ?? "",
           dateLabel: booked.dateLabel,
           timeLabel: booked.timeLabel,
+          threadHref,
+          tone: partner.tone,
+          learnerLabel: currentLearnerLabel(),
         });
       }
     }
@@ -280,7 +293,11 @@ export function Conversation({
                 parseGearPrice(gear.price) * AFFILIATE_COMMISSION_RATE,
               ),
               itemName: gear.name,
+              gearId: gear.id,
               skill: partner.skill,
+              threadHref,
+              tone: partner.tone,
+              learnerLabel: currentLearnerLabel(),
             });
           }
         }
